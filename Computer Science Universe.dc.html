@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;background:#04050b;overflow:hidden;font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased}
+@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.85}}
+@keyframes pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.32)}}
+@keyframes drift{0%{transform:translate(0,0)}50%{transform:translate(12px,-14px)}100%{transform:translate(0,0)}}
+@keyframes halo{0%{transform:scale(.72);opacity:.5}80%{opacity:0}100%{transform:scale(1.75);opacity:0}}
+@keyframes ringrot{to{transform:rotate(360deg)}}
+@keyframes zoomin{0%{opacity:0;transform:scale(1.16)}100%{opacity:1;transform:scale(1)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail" data-bg-color="#070a14">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#070a14"></rect>
+    <circle cx="500" cy="260" r="220" fill="#7b5cf0" opacity="0.16"></circle>
+    <circle cx="820" cy="520" r="220" fill="#e36fbe" opacity="0.16"></circle>
+    <circle cx="360" cy="560" r="180" fill="#f0a24a" opacity="0.14"></circle>
+    <line x1="500" y1="300" x2="780" y2="500" stroke="#9aa8cd" stroke-width="2" opacity="0.4"></line>
+    <line x1="500" y1="300" x2="420" y2="540" stroke="#9aa8cd" stroke-width="2" opacity="0.4"></line>
+    <line x1="780" y1="500" x2="900" y2="360" stroke="#9aa8cd" stroke-width="2" opacity="0.4"></line>
+    <circle cx="500" cy="300" r="26" fill="#b79cff"></circle>
+    <circle cx="780" cy="500" r="30" fill="#f08fce"></circle>
+    <circle cx="420" cy="540" r="20" fill="#f5b86a"></circle>
+    <circle cx="900" cy="360" r="18" fill="#7fc6f0"></circle>
+    <text x="600" y="710" fill="#eef2fb" font-family="monospace" font-size="40" text-anchor="middle" letter-spacing="8">CS UNIVERSE</text>
+  </svg>
+</template>
+
+<div style="position:fixed;inset:0;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;background:radial-gradient(ellipse at 50% 38%, #0c1224 0%, #070a14 52%, #04050b 100%)" onClick="{{ onBg }}" onMouseDown="{{ onDown }}">
+
+  <div style="{{ stageStyle }}">
+
+    <sc-for list="{{ stars }}" as="st" hint-placeholder-count="0">
+      <div style="{{ st.style }}"></div>
+    </sc-for>
+
+    <div style="position:absolute;left:362px;top:-150px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 280 / .15), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 26s ease-in-out infinite"></div>
+    <div style="position:absolute;left:42px;top:430px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 42 / .13), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 31s ease-in-out infinite"></div>
+    <div style="position:absolute;left:330px;top:130px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 162 / .11), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 28s ease-in-out infinite"></div>
+    <div style="position:absolute;left:714px;top:290px;width:660px;height:660px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 330 / .14), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 33s ease-in-out infinite"></div>
+    <div style="position:absolute;left:906px;top:30px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 200 / .12), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 29s ease-in-out infinite"></div>
+    <div style="position:absolute;left:-22px;top:110px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 16 / .11), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 30s ease-in-out infinite"></div>
+
+    <sc-if value="{{ isGalaxy }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;animation:fadein .4s ease both">
+
+      <div style="position:absolute;left:672px;top:116px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">THEORY</div>
+      <div style="position:absolute;left:352px;top:704px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">SYSTEMS</div>
+      <div style="position:absolute;left:632px;top:398px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">LANGUAGES</div>
+      <div style="position:absolute;left:1024px;top:560px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">INTELLIGENCE</div>
+      <div style="position:absolute;left:1216px;top:300px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">INTERFACE</div>
+      <div style="position:absolute;left:288px;top:372px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">SECURITY</div>
+
+      <svg viewBox="0 0 1600 1000" style="position:absolute;inset:0;width:1600px;height:1000px;pointer-events:none;z-index:1">
+        <defs>
+          <linearGradient id="axh" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#9fb2da" stop-opacity="0"></stop>
+            <stop offset="0.13" stop-color="#9fb2da" stop-opacity="0.30"></stop>
+            <stop offset="0.5" stop-color="#9fb2da" stop-opacity="0.05"></stop>
+            <stop offset="0.87" stop-color="#9fb2da" stop-opacity="0.30"></stop>
+            <stop offset="1" stop-color="#9fb2da" stop-opacity="0"></stop>
+          </linearGradient>
+          <linearGradient id="axv" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#9fb2da" stop-opacity="0"></stop>
+            <stop offset="0.14" stop-color="#9fb2da" stop-opacity="0.28"></stop>
+            <stop offset="0.5" stop-color="#9fb2da" stop-opacity="0.05"></stop>
+            <stop offset="0.86" stop-color="#9fb2da" stop-opacity="0.28"></stop>
+            <stop offset="1" stop-color="#9fb2da" stop-opacity="0"></stop>
+          </linearGradient>
+        </defs>
+        <line x1="92" y1="500" x2="1508" y2="500" stroke="url(#axh)" stroke-width="1.3"></line>
+        <line x1="800" y1="80" x2="800" y2="920" stroke="url(#axv)" stroke-width="1.3"></line>
+        <polygon points="104,494 104,506 92,500" fill="#9fb2da" fill-opacity="0.42"></polygon>
+        <polygon points="1496,494 1496,506 1508,500" fill="#9fb2da" fill-opacity="0.42"></polygon>
+        <polygon points="794,92 806,92 800,80" fill="#9fb2da" fill-opacity="0.42"></polygon>
+        <polygon points="794,908 806,908 800,920" fill="#9fb2da" fill-opacity="0.42"></polygon>
+      </svg>
+
+      <div style="position:absolute;left:800px;top:-50px;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:8">
+        <div style="font:600 14px 'JetBrains Mono';letter-spacing:5px;color:rgba(190,205,235,.62)">ABSTRACT &#8593;</div>
+        <div style="font:400 11px 'Space Grotesk';letter-spacing:1px;color:rgba(150,168,205,.42);margin-top:3px">theory &#183; proofs &#183; math</div>
+      </div>
+      <div style="position:absolute;left:800px;top:1008px;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:8">
+        <div style="font:400 11px 'Space Grotesk';letter-spacing:1px;color:rgba(150,168,205,.42);margin-bottom:3px">silicon &#183; pixels &#183; devices</div>
+        <div style="font:600 14px 'JetBrains Mono';letter-spacing:5px;color:rgba(190,205,235,.62)">&#8595; CONCRETE</div>
+      </div>
+      <div style="position:absolute;left:-22px;top:500px;transform:translateY(-50%);pointer-events:none;z-index:8">
+        <div style="font:600 14px 'JetBrains Mono';letter-spacing:4px;color:rgba(190,205,235,.62);white-space:nowrap">&#9664; MACHINE</div>
+        <div style="font:400 11px 'Space Grotesk';letter-spacing:1px;color:rgba(150,168,205,.42);margin-top:3px;white-space:nowrap">closer to hardware</div>
+      </div>
+      <div style="position:absolute;left:1618px;top:500px;transform:translate(-100%,-50%);text-align:right;pointer-events:none;z-index:8">
+        <div style="font:600 14px 'JetBrains Mono';letter-spacing:4px;color:rgba(190,205,235,.62);white-space:nowrap">HUMAN &#9658;</div>
+        <div style="font:400 11px 'Space Grotesk';letter-spacing:1px;color:rgba(150,168,205,.42);margin-top:3px;white-space:nowrap">closer to people</div>
+      </div>
+
+      <svg viewBox="0 0 1600 1000" style="position:absolute;inset:0;width:1600px;height:1000px;overflow:visible;pointer-events:none;z-index:2">
+        <sc-for list="{{ galaxyEdges }}" as="e" hint-placeholder-count="0">
+          <path d="{{ e.d }}" stroke="{{ e.stroke }}" stroke-width="{{ e.sw }}" stroke-opacity="{{ e.op }}" fill="none" stroke-linecap="round"></path>
+        </sc-for>
+      </svg>
+
+      <sc-for list="{{ bigRings }}" as="b" hint-placeholder-count="0">
+        <div style="{{ b.style }}"></div>
+      </sc-for>
+
+      <sc-for list="{{ galaxyNodes }}" as="n" hint-placeholder-count="0">
+        <div style="{{ n.coreStyle }}" onClick="{{ n.onClick }}" onMouseEnter="{{ n.onEnter }}" onMouseLeave="{{ gLeave }}"></div>
+      </sc-for>
+      <sc-for list="{{ galaxyNodes }}" as="n" hint-placeholder-count="0">
+        <div style="{{ n.labelStyle }}">{{ n.label }}</div>
+      </sc-for>
+
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;animation:zoomin .5s cubic-bezier(.2,.8,.25,1) both">
+
+      <div style="{{ reticleStyle }}"></div>
+      <div style="{{ reticleStyle2 }}"></div>
+
+      <svg viewBox="0 0 1600 1000" style="position:absolute;inset:0;width:1600px;height:1000px;overflow:visible;pointer-events:none;z-index:2">
+        <sc-for list="{{ detailEdges }}" as="e" hint-placeholder-count="0">
+          <path d="{{ e.d }}" stroke="{{ e.stroke }}" stroke-width="{{ e.sw }}" stroke-opacity="{{ e.op }}" stroke-dasharray="{{ e.dash }}" fill="none" stroke-linecap="round"></path>
+        </sc-for>
+      </svg>
+
+      <sc-for list="{{ detailNodes }}" as="n" hint-placeholder-count="0">
+        <div style="{{ n.coreStyle }}" onClick="{{ n.onClick }}" onMouseEnter="{{ n.onEnter }}" onMouseLeave="{{ dLeave }}"></div>
+      </sc-for>
+      <sc-for list="{{ detailNodes }}" as="n" hint-placeholder-count="0">
+        <div style="{{ n.labelStyle }}">{{ n.label }}</div>
+      </sc-for>
+
+    </div>
+    </sc-if>
+
+  </div>
+
+  <div style="position:absolute;left:0;top:0;width:540px;height:400px;background:radial-gradient(ellipse 90% 90% at top left, rgba(5,7,14,.94), rgba(5,7,14,.55) 46%, transparent 76%);pointer-events:none;z-index:15"></div>
+  <div style="position:absolute;left:0;bottom:0;width:470px;height:300px;background:radial-gradient(ellipse 90% 90% at bottom left, rgba(5,7,14,.85), rgba(5,7,14,.4) 50%, transparent 78%);pointer-events:none;z-index:15"></div>
+
+  <sc-if value="{{ isGalaxy }}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute;left:34px;top:30px;z-index:20;max-width:380px;pointer-events:none">
+    <div style="font:500 12px 'JetBrains Mono';letter-spacing:4px;color:oklch(0.78 0.12 200);margin-bottom:11px">// AN ATLAS OF THE FIELD</div>
+    <div style="font:700 40px/1.04 'Space Grotesk';color:#eef2fb;letter-spacing:-1.2px">The Computer<br>Science Universe</div>
+    <div style="font:400 14px/1.55 'Space Grotesk';color:rgba(200,210,230,.6);margin-top:13px;max-width:344px">A topological map of the field — abstraction rises to the top, machines sit left, people sit right. The six ringed stars are whole galaxies; click one to dive in.</div>
+  </div>
+
+  <div style="position:absolute;right:28px;top:28px;z-index:20;width:252px;background:rgba(10,13,22,.66);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;pointer-events:none">
+    <div style="font:500 10px 'JetBrains Mono';letter-spacing:3px;color:rgba(160,172,196,.7);margin-bottom:13px">MAP LEGEND</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 280);box-shadow:0 0 9px oklch(0.8 0.18 280 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Theory</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 162);box-shadow:0 0 9px oklch(0.8 0.18 162 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Software &amp; Languages</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 42);box-shadow:0 0 9px oklch(0.8 0.18 42 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Systems &amp; Architecture</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 330);box-shadow:0 0 9px oklch(0.8 0.18 330 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">AI &amp; Data</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 200);box-shadow:0 0 9px oklch(0.8 0.18 200 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Human-Centric</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 16);box-shadow:0 0 9px oklch(0.8 0.18 16 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Security &amp; Privacy</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.9 0.1 92);box-shadow:0 0 9px oklch(0.88 0.12 92 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Intersectional glue</span></div>
+    </div>
+    <div style="height:1px;background:rgba(255,255,255,.08);margin:14px 0"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#fff,oklch(0.82 0.16 280) 50%,oklch(0.46 0.13 280));box-shadow:0 0 0 1.5px rgba(255,255,255,.6),0 0 0 5px oklch(0.82 0.16 280 / .18),0 0 10px oklch(0.8 0.18 280 / .8)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Big star = a galaxy to enter</span></div>
+    <div style="font:400 11.5px/1.5 'Space Grotesk';color:rgba(180,190,212,.66)">Node size = research volume.<br>Bridge weight = how tightly two fields couple today.</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;left:34px;top:30px;z-index:20;max-width:400px">
+    <div onClick="{{ onBack }}" style="display:inline-flex;align-items:center;gap:7px;pointer-events:auto;cursor:pointer;font:500 12px 'JetBrains Mono';letter-spacing:1.5px;color:rgba(190,205,235,.82);background:rgba(12,16,26,.7);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:7px 14px;margin-bottom:16px" style-hover="display:inline-flex;align-items:center;gap:7px;pointer-events:auto;cursor:pointer;font:500 12px 'JetBrains Mono';letter-spacing:1.5px;color:#fff;background:rgba(22,28,42,.85);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:7px 14px;margin-bottom:16px">&#9664; THE UNIVERSE</div>
+    <div style="pointer-events:none">
+      <div style="font:500 12px 'JetBrains Mono';letter-spacing:3px;color:{{ detailKicker.color }};margin-bottom:9px;text-transform:uppercase">{{ detailKicker.text }}</div>
+      <div style="font:700 38px/1.05 'Space Grotesk';color:#eef2fb;letter-spacing:-1px">{{ detailTitle }}</div>
+      <div style="font:400 13.5px/1.5 'Space Grotesk';color:rgba(200,210,230,.62);margin-top:11px;max-width:360px">{{ detailIntro }}</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <div style="position:absolute;left:34px;bottom:30px;z-index:20;width:362px;background:rgba(10,13,22,.74);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:20px 22px;min-height:118px;transition:all .3s">
+    <sc-if value="{{ panelHasFocus }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="font:500 11px 'JetBrains Mono';letter-spacing:2.5px;color:{{ panelColor }};margin-bottom:9px;text-transform:uppercase">{{ panelKicker }}</div>
+        <div style="font:700 23px 'Space Grotesk';color:#eff3fc;margin-bottom:9px;letter-spacing:-.3px">{{ panelTitle }}</div>
+        <div style="font:400 14px/1.5 'Space Grotesk';color:rgba(205,214,232,.8);margin-bottom:14px">{{ panelBlurb }}</div>
+        <sc-if value="{{ panelHasRes }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-bottom:14px;padding:12px 13px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:9px">
+            <div style="font:500 9.5px 'JetBrains Mono';letter-spacing:2px;color:rgba(160,172,196,.72);margin-bottom:4px">KEY VENUES</div>
+            <div style="font:400 12.5px/1.4 'Space Grotesk';color:rgba(216,226,246,.86);margin-bottom:11px">{{ panelVenues }}</div>
+            <div style="font:500 9.5px 'JetBrains Mono';letter-spacing:2px;color:rgba(160,172,196,.72);margin-bottom:4px">START HERE &#128218;</div>
+            <div style="font:400 12.5px/1.4 'Space Grotesk';color:rgba(216,226,246,.86)">{{ panelBook }}</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ panelEnter }}" hint-placeholder-val="{{ false }}">
+          <div style="display:inline-block;font:600 11px 'JetBrains Mono';letter-spacing:1.5px;color:{{ panelColor }};border:1px solid {{ panelEnterBorder }};background:{{ panelEnterBg }};border-radius:7px;padding:6px 11px;margin-bottom:4px">&#10530; CLICK TO ENTER THIS GALAXY</div>
+        </sc-if>
+        <sc-if value="{{ panelHasConn }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="font:500 10px 'JetBrains Mono';letter-spacing:2px;color:rgba(160,172,196,.7);margin-bottom:9px">{{ panelConnLabel }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ connections }}" as="c" hint-placeholder-count="0">
+                <span style="{{ c.style }}">{{ c.label }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ panelEmpty }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="font:500 11px 'JetBrains Mono';letter-spacing:2.5px;color:oklch(0.78 0.12 200);margin-bottom:9px">EXPLORE</div>
+        <div style="font:400 15px/1.55 'Space Grotesk';color:rgba(210,218,236,.82)">Hover any field to light up its connections and field guide. The six ringed stars are galaxies — click one to zoom inside. Drag anywhere to pan the map.</div>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ panned }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onRecenter }}" style="position:absolute;right:28px;bottom:30px;z-index:21;pointer-events:auto;cursor:pointer;font:500 11px 'JetBrains Mono';letter-spacing:1.5px;color:rgba(190,205,235,.85);background:rgba(12,16,26,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:8px 14px" style-hover="position:absolute;right:28px;bottom:30px;z-index:21;pointer-events:auto;cursor:pointer;font:500 11px 'JetBrains Mono';letter-spacing:1.5px;color:#fff;background:rgba(22,28,42,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.24);border-radius:20px;padding:8px 14px">&#10530; RECENTER</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ambientMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;labelMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;major&quot;,&quot;all&quot;],&quot;default&quot;:&quot;all&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { hovered: null, selected: null, view: 'galaxy', detailId: null, dHover: null, dSel: null, panX: 0, panY: 0 };
+  _clamp(v){ return Math.max(-1000, Math.min(1000, v)); }
+  onMove = (e) => { if(!this._md) return; if(Math.abs(e.clientX-this._dx)+Math.abs(e.clientY-this._dy)>4) this._moved=true; this.setState({ panX:this._clamp(e.clientX-this._sx), panY:this._clamp(e.clientY-this._sy) }); };
+  onUp = () => { this._md=false; };
+
+  hueOf(r){ return ({theory:280,systems:42,software:162,ai:330,hci:200,security:16,glue:92,ext:250})[r] ?? 250; }
+  regionName(r){ return ({theory:'Theoretical CS',systems:'Systems & Architecture',software:'Software & Languages',ai:'AI & Data',hci:'Human-Centric Computing',security:'Security & Privacy',glue:'Intersectional Field',ext:'Adjacent Discipline'})[r]; }
+
+  build(){
+    const N = [
+      ['t_alg','Algorithms & Data Structures','theory',0.40,0.20,5,'The grammar of efficient computation — how to structure data and steps to solve problems provably well.'],
+      ['t_complex','Computability & Complexity','theory',0.46,0.085,3,'What can be computed at all, and what it truly costs in time and space.'],
+      ['t_info','Information Theory','theory',0.57,0.13,2,'Quantifying information, compression, and the ultimate limits of communication.'],
+      ['t_formal','Formal Methods & Verification','theory',0.31,0.135,2,'Proving software correct with mathematical rigor instead of testing alone.'],
+      ['t_crypto','Cryptography','theory',0.255,0.27,3,'Turning hard math problems into secrets, signatures, and trust.'],
+      ['t_colt','Computational Learning Theory','theory',0.525,0.30,3,'The mathematics of learning itself — what is learnable, from how many examples, and how efficiently (PAC learning, VC dimension, generalization bounds).'],
+      ['s_arch','Computer Architecture','systems',0.12,0.86,4,'The silicon engine room — processors, memory, and the machine beneath the machine.'],
+      ['s_os','Operating Systems','systems',0.21,0.72,4,'The conductor that shares one machine among every program at once.'],
+      ['s_dist','Distributed Systems & Cloud','systems',0.35,0.60,4,'Thousands of machines cooperating as one reliable, planet-scale computer.'],
+      ['s_net','Computer Networks','systems',0.27,0.80,3,'The protocols and plumbing that move bits across the world.'],
+      ['s_db','Database Systems','systems',0.435,0.685,3,'Storing, querying, and protecting data at massive scale.'],
+      ['s_embed','Embedded & Real-Time','systems',0.10,0.65,2,'Computing woven into physical devices, where milliseconds are deadlines.'],
+      ['sw_pl','Programming Languages','software',0.38,0.36,3,'Designing the notations we use to express computation — and their precise meaning.'],
+      ['sw_comp','Compilers & Interpreters','software',0.30,0.46,2,'Translating human-friendly code into instructions a machine can run.'],
+      ['sw_eng','Software Engineering','software',0.46,0.505,4,'Building, maintaining, and scaling large software with real teams.'],
+      ['ai_ml','Machine Learning','ai',0.62,0.56,5,'Systems that learn patterns from data instead of being explicitly programmed.'],
+      ['ai_nlp','Natural Language Processing','ai',0.735,0.50,4,'Teaching machines to read, write, and converse in human language.'],
+      ['ai_cv','Computer Vision','ai',0.71,0.64,4,'Giving machines the ability to see and interpret the visual world.'],
+      ['ai_rob','Robotics & Control','ai',0.60,0.80,3,'Perception, planning, and action in physical, uncertain environments.'],
+      ['ai_data','Data Mining & Big Data','ai',0.52,0.645,3,'Finding meaningful structure in oceans of raw data.'],
+      ['ai_kr','Knowledge Representation','ai',0.565,0.42,2,'Encoding facts and reasoning so machines can draw conclusions.'],
+      ['h_hci','Human-Computer Interaction','hci',0.79,0.30,4,'Designing the interfaces where people and computers meet.'],
+      ['h_gfx','Computer Graphics','hci',0.70,0.385,3,'Synthesizing images and entire worlds, pixel by pixel.'],
+      ['h_xr','Virtual & Augmented Reality','hci',0.86,0.43,2,'Immersive and blended realities rendered in real time.'],
+      ['h_viz','Data Visualization','hci',0.675,0.225,2,'Turning abstract data into images the mind can grasp.'],
+      ['sec_net','Network Security','security',0.17,0.50,3,'Defending systems and communications from adversaries.'],
+      ['sec_ia','Information Assurance','security',0.14,0.40,2,'Guaranteeing confidentiality, integrity, and availability of information.'],
+      ['sec_priv','Privacy-Enhancing Tech','security',0.23,0.32,2,'Computing on data while protecting the people behind it.'],
+      ['x_agt','Algorithmic Game Theory','glue',0.50,0.30,2,'Where algorithms meet economics — incentives, auctions, and strategic agents.'],
+      ['x_qis','Quantum Information Science','glue',0.52,0.045,2,'Theory + physics: information carried by superposition and entanglement.'],
+      ['x_neuro','Neuromorphic Computing','glue',0.40,0.90,2,'Architecture + AI + biology: chips that compute like brains.'],
+      ['x_cpriv','Computational Privacy','glue',0.32,0.545,2,'Security + databases: querying data without ever exposing it.'],
+      ['x_fin','Computational Finance','glue',0.85,0.60,2,'Algorithms + economics applied to markets, pricing, and risk.'],
+      ['x_bioinf','Bioinformatics','glue',0.80,0.13,2,'Algorithms + biology: decoding the data of life itself.'],
+      ['x_quantum','Quantum Computing','glue',0.45,0.92,2,'Hardware + theory: harnessing quantum mechanics to compute.'],
+      ['ext_econ','Economics','ext',0.95,0.55,1,'An adjacent discipline just beyond the edge of the map.'],
+      ['ext_bio','Biology','ext',0.90,0.045,1,'An adjacent discipline just beyond the edge of the map.'],
+      ['ext_phys','Physics','ext',0.45,0.975,1,'An adjacent discipline just beyond the edge of the map.'],
+      ['ext_med','Medicine','ext',0.95,0.38,1,'An adjacent discipline just beyond the edge of the map.'],
+      ['ext_art','Art & Design','ext',0.95,0.215,1,'An adjacent discipline just beyond the edge of the map.']
+    ];
+    const E = [
+      ['t_alg','t_complex',3],['t_complex','t_info',2],['t_alg','t_formal',2],['t_formal','sw_pl',2],
+      ['t_crypto','t_complex',2],['t_crypto','sec_net',3],
+      ['t_colt','t_complex',2],['t_colt','t_alg',2],['t_colt','ai_ml',3],
+      ['sw_pl','sw_comp',3],['sw_comp','s_arch',2],['sw_pl','sw_eng',2],['t_alg','sw_eng',3],
+      ['sw_eng','s_db',2],['sw_eng','s_dist',2],
+      ['s_os','s_arch',4],['s_os','s_net',3],['s_net','s_dist',3],['s_dist','s_db',3],['s_dist','s_os',2],
+      ['s_embed','s_arch',3],['s_embed','ai_rob',2],
+      ['t_alg','ai_ml',4],['ai_ml','ai_cv',4],['ai_ml','ai_nlp',4],['ai_ml','ai_data',3],['ai_ml','ai_rob',3],
+      ['ai_ml','ai_kr',2],['ai_data','s_db',3],['ai_kr','ai_nlp',2],['ai_cv','h_gfx',2],['ai_nlp','h_hci',2],
+      ['t_info','ai_ml',2],
+      ['h_hci','h_gfx',3],['h_gfx','h_xr',3],['h_hci','h_viz',3],['h_hci','h_xr',2],['h_viz','ai_data',2],
+      ['h_hci','sw_eng',2],
+      ['sec_net','sec_ia',2],['sec_ia','sec_priv',2],['sec_net','s_net',3],['sec_priv','x_cpriv',2],
+      ['x_cpriv','s_db',2],
+      ['x_agt','t_alg',2],['x_agt','t_complex',2],['x_agt','ext_econ',2],['x_qis','t_complex',2],['x_qis','x_quantum',2],
+      ['x_neuro','s_arch',2],['x_neuro','ai_ml',2],['x_quantum','s_arch',2],['x_quantum','t_complex',2],
+      ['x_fin','ai_ml',2],['x_fin','t_alg',1],['x_fin','ext_econ',2],
+      ['x_bioinf','ai_data',2],['x_bioinf','ext_bio',2],['x_quantum','ext_phys',2],
+      ['ai_ml','ext_med',1],['h_xr','ext_art',1],['ai_cv','ext_med',1]
+    ];
+    this.N = N; this.E = E;
+    this.byId = {};
+    N.forEach(a => { this.byId[a[0]] = {id:a[0],label:a[1],region:a[2],x:a[3],y:a[4],w:a[5],blurb:a[6]}; });
+    this.adj = {};
+    N.forEach(a => this.adj[a[0]] = []);
+    E.forEach(([a,b]) => { if(this.adj[a] && this.adj[b]){ this.adj[a].push(b); this.adj[b].push(a); } });
+
+    this.BIG = ['t_alg','ai_ml','s_os','sw_eng','h_hci','sec_net'];
+    this.details = {
+      t_alg: { title:'Algorithms & Data Structures',
+        sub:[
+          ['Sorting & Searching','Ordering and locating data — the first algorithms every programmer learns.'],
+          ['Graph Algorithms','Shortest paths, flows, and connectivity across networks of nodes and edges.'],
+          ['Dynamic Programming','Solving large problems by caching the answers to overlapping smaller ones.'],
+          ['Greedy Methods','Building solutions from locally optimal choices — and proving when that is enough.'],
+          ['Randomized Algorithms','Using controlled randomness for simpler, faster, high-probability solutions.'],
+          ['Approximation','Provably near-optimal answers when the exact one is intractable.'],
+          ['Core Data Structures','Trees, heaps, and hash tables — shaping data for raw speed.'],
+          ['Computational Geometry','Algorithms over points, shapes, and space.']
+        ], rel:['ai_ml','sec_net','sw_eng'] },
+      ai_ml: { title:'Machine Learning',
+        sub:[
+          ['Deep Learning','Many-layered neural networks that learn rich representations from raw data.'],
+          ['Reinforcement Learning','Agents that learn by trial, error, and reward inside an environment.'],
+          ['Supervised Learning','Learning to predict labels from examples — classification and regression.'],
+          ['Unsupervised Learning','Discovering clusters, structure, and embeddings without any labels.'],
+          ['Generative Models','LLMs, diffusion, and GANs that synthesize new text, images, and more.'],
+          ['Probabilistic ML','Bayesian models that reason explicitly about uncertainty.'],
+          ['Optimization','The gradient-based engines that actually train the models.'],
+          ['ML Systems & MLOps','Serving, scaling, and operating models in the real world.']
+        ], rel:['t_alg','t_colt','h_hci','sw_eng'] },
+      s_os: { title:'Operating Systems',
+        sub:[
+          ['Process Scheduling','Deciding which task runs on which core, and exactly when.'],
+          ['Memory Management','Virtual memory, paging, and the illusion of endless RAM.'],
+          ['File Systems','Organizing bytes on disk into durable, named storage.'],
+          ['Concurrency','Locks, threads, and doing many things at once — safely.'],
+          ['Virtualization','Containers and VMs that slice one machine into many.'],
+          ['Kernel & Drivers','The privileged core that speaks directly to the hardware.'],
+          ['Isolation & Security','Keeping processes and users from harming one another.']
+        ], rel:['s_arch','s_dist','sec_net'] },
+      sw_eng: { title:'Software Engineering',
+        sub:[
+          ['Architecture & Design','Structuring large systems with patterns that scale.'],
+          ['Testing & QA','Automated checks that keep software correct as it grows.'],
+          ['Version Control & CI/CD','Coordinating change and shipping continuously.'],
+          ['DevOps & Reliability','Running services that stay up under real-world load.'],
+          ['Programming Languages','The notations and type systems we build software with.'],
+          ['Compilers','Translating source into fast, correct machine code.'],
+          ['Maintenance','Keeping aging codebases healthy over many years.']
+        ], rel:['t_alg','ai_ml','h_hci'] },
+      h_hci: { title:'Human-Computer Interaction',
+        sub:[
+          ['Interaction Design','Crafting how people act on and through interfaces.'],
+          ['Usability & Accessibility','Designing so everyone, in every context, can succeed.'],
+          ['Data Visualization','Turning abstract data into images the mind can grasp.'],
+          ['AR / VR','Immersive and blended realities rendered in real time.'],
+          ['Computer Graphics','Synthesizing images and whole worlds, pixel by pixel.'],
+          ['Ubiquitous Computing','Interfaces woven into devices, rooms, and bodies.'],
+          ['Affective & Social','Systems attuned to emotion and human relationships.']
+        ], rel:['ai_ml','sw_eng','h_gfx'] },
+      sec_net: { title:'Security & Cryptography', region:'security',
+        sub:[
+          ['Cryptography','Turning hard math into secrets, signatures, and trust.'],
+          ['Network & Web Security','Defending traffic and services from attackers.'],
+          ['Systems Security','Hardening operating systems, hardware, and software.'],
+          ['Privacy Technologies','Computing on data while protecting the people in it.'],
+          ['Protocols','Secure handshakes that let strangers trust each other.'],
+          ['Threat & Malware','Understanding, detecting, and countering attacks.'],
+          ['Formal Security','Proving security properties with mathematics.']
+        ], rel:['t_alg','s_os','sec_priv'] }
+    };
+
+    this.RES = {
+      t_alg:{v:'STOC · FOCS · SODA',b:'Cormen, Leiserson, Rivest & Stein — Introduction to Algorithms (CLRS)'},
+      t_complex:{v:'FOCS · STOC · CCC',b:'Sipser — Introduction to the Theory of Computation'},
+      t_info:{v:'ISIT · IEEE Trans. Information Theory',b:'Cover & Thomas — Elements of Information Theory'},
+      t_formal:{v:'CAV · POPL · LICS',b:'Baier & Katoen — Principles of Model Checking'},
+      t_crypto:{v:'CRYPTO · EUROCRYPT · TCC',b:'Katz & Lindell — Introduction to Modern Cryptography'},
+      t_colt:{v:'COLT · NeurIPS · ALT',b:'Shalev-Shwartz & Ben-David — Understanding Machine Learning'},
+      s_arch:{v:'ISCA · MICRO · ASPLOS',b:'Hennessy & Patterson — Computer Architecture: A Quantitative Approach'},
+      s_os:{v:'SOSP · OSDI · EuroSys',b:'Arpaci-Dusseau — Operating Systems: Three Easy Pieces'},
+      s_dist:{v:'OSDI · SOSP · NSDI',b:'Kleppmann — Designing Data-Intensive Applications'},
+      s_net:{v:'SIGCOMM · NSDI · CoNEXT',b:'Kurose & Ross — Computer Networking: A Top-Down Approach'},
+      s_db:{v:'SIGMOD · VLDB · ICDE',b:'Silberschatz, Korth & Sudarshan — Database System Concepts'},
+      s_embed:{v:'RTSS · EMSOFT · RTAS',b:'Lee & Seshia — Introduction to Embedded Systems'},
+      sw_pl:{v:'POPL · PLDI · ICFP',b:'Pierce — Types and Programming Languages'},
+      sw_comp:{v:'PLDI · CGO · CC',b:'Aho, Lam, Sethi & Ullman — Compilers (the Dragon Book)'},
+      sw_eng:{v:'ICSE · FSE · ASE',b:'Hunt & Thomas — The Pragmatic Programmer'},
+      ai_ml:{v:'NeurIPS · ICML · ICLR',b:'Bishop — Pattern Recognition and Machine Learning'},
+      ai_nlp:{v:'ACL · EMNLP · NAACL',b:'Jurafsky & Martin — Speech and Language Processing'},
+      ai_cv:{v:'CVPR · ICCV · ECCV',b:'Szeliski — Computer Vision: Algorithms and Applications'},
+      ai_rob:{v:'ICRA · IROS · RSS',b:'Thrun, Burgard & Fox — Probabilistic Robotics'},
+      ai_data:{v:'KDD · ICDM · WSDM',b:'Han, Kamber & Pei — Data Mining: Concepts and Techniques'},
+      ai_kr:{v:'KR · AAAI · IJCAI',b:'Brachman & Levesque — Knowledge Representation and Reasoning'},
+      h_hci:{v:'CHI · UIST · CSCW',b:'Norman — The Design of Everyday Things'},
+      h_gfx:{v:'SIGGRAPH · EGSR · I3D',b:'Pharr, Jakob & Humphreys — Physically Based Rendering'},
+      h_xr:{v:'IEEE VR · ISMAR · UIST',b:'LaValle — Virtual Reality'},
+      h_viz:{v:'IEEE VIS · EuroVis',b:'Munzner — Visualization Analysis and Design'},
+      sec_net:{v:'IEEE S&P · USENIX Security · CCS',b:'Anderson — Security Engineering'},
+      sec_ia:{v:'CCS · USENIX Security · NDSS',b:'Anderson — Security Engineering'},
+      sec_priv:{v:'PoPETs · CCS · IEEE S&P',b:'Dwork & Roth — The Algorithmic Foundations of Differential Privacy'},
+      x_agt:{v:'EC · WINE · STOC',b:'Nisan, Roughgarden, Tardos & Vazirani — Algorithmic Game Theory'},
+      x_qis:{v:'QIP · ITCS',b:'Nielsen & Chuang — Quantum Computation and Quantum Information'},
+      x_neuro:{v:'ISCA · IJCNN · Nature Electronics',b:'Mead — Analog VLSI and Neural Systems'},
+      x_cpriv:{v:'PoPETs · CCS',b:'Dwork & Roth — The Algorithmic Foundations of Differential Privacy'},
+      x_fin:{v:'ACM ICAIF · Quantitative Finance',b:'Hull — Options, Futures, and Other Derivatives'},
+      x_bioinf:{v:'ISMB · RECOMB · WABI',b:'Durbin, Eddy, Krogh & Mitchison — Biological Sequence Analysis'},
+      x_quantum:{v:'QIP · FOCS · STOC',b:'Nielsen & Chuang — Quantum Computation and Quantum Information'}
+    };
+
+    this.starsRaw = [];
+    let seed = 7;
+    const rnd = () => { seed = (seed*9301+49297)%233280; return seed/233280; };
+    for(let i=0;i<82;i++){
+      this.starsRaw.push({ x:rnd()*1600, y:rnd()*1000, s:0.6+rnd()*2, du:(3+rnd()*5), d:(rnd()*6) });
+    }
+    this._built = true;
+  }
+
+  componentDidMount(){
+    this._onR = () => this.forceUpdate();
+    window.addEventListener('resize', this._onR);
+    this._onK = (e) => { if(e.key==='Escape' && this.state.view==='detail') this.back(); };
+    window.addEventListener('keydown', this._onK);
+    window.addEventListener('mousemove', this.onMove);
+    window.addEventListener('mouseup', this.onUp);
+  }
+  componentWillUnmount(){ window.removeEventListener('resize', this._onR); window.removeEventListener('keydown', this._onK); window.removeEventListener('mousemove', this.onMove); window.removeEventListener('mouseup', this.onUp); }
+
+  enter(id){ this.setState({ view:'detail', detailId:id, dHover:null, dSel:null, hovered:null, selected:null, panX:0, panY:0 }); }
+  back(){ this.setState({ view:'galaxy', detailId:null, dHover:null, dSel:null, panX:0, panY:0 }); }
+
+  curve(x1,y1,x2,y2){
+    const mx=(x1+x2)/2, my=(y1+y2)/2, dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy)||1;
+    const off=Math.min(len*0.09,70), cx=mx-dy/len*off, cy=my+dx/len*off;
+    return `M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+  }
+
+  renderVals(){
+    if(!this._built) this.build();
+    const S = this.state, W=1600, H=1000;
+    const motion = this.props.ambientMotion !== false;
+    const labelAll = (this.props.labelMode || 'major') === 'all';
+    const vw = (typeof window!=='undefined') ? window.innerWidth : 1280;
+    const vh = (typeof window!=='undefined') ? window.innerHeight : 800;
+    const scale = Math.min(vw/W, vh/H, 1.08);
+    const stageStyle = `position:relative;width:${W}px;height:${H}px;flex:none;transform:translate(${S.panX||0}px,${S.panY||0}px) scale(${scale.toFixed(4)});transform-origin:center center`;
+    const px = x => x*W, py = y => y*H;
+    const isDetail = S.view==='detail', isGalaxy = !isDetail;
+
+    const stars = this.starsRaw.map(s => ({
+      style: `position:absolute;left:${s.x.toFixed(0)}px;top:${s.y.toFixed(0)}px;width:${s.s.toFixed(1)}px;height:${s.s.toFixed(1)}px;border-radius:50%;background:#dfe7ff;opacity:.4;z-index:0`
+        + (motion ? `;animation:twinkle ${s.du.toFixed(2)}s ease-in-out ${s.d.toFixed(2)}s infinite` : ``)
+    }));
+
+    let out = { stageStyle, stars, isDetail, isGalaxy,
+      gLeave: () => this.setState({ hovered:null }),
+      dLeave: () => this.setState({ dHover:null }),
+      onBack: () => this.back(),
+      onBg: () => { if(this._moved) return; if(this.state.view==='detail') this.setState({ dSel:null }); else this.setState({ selected:null }); },
+      onDown: (e) => { if(e.button!==0) return; this._md=true; this._moved=false; this._dx=e.clientX; this._dy=e.clientY; this._sx=e.clientX-(this.state.panX||0); this._sy=e.clientY-(this.state.panY||0); },
+      onRecenter: () => this.setState({ panX:0, panY:0 }),
+      panned: (S.panX||0)!==0 || (S.panY||0)!==0,
+      galaxyNodes:[], galaxyEdges:[], bigRings:[], detailNodes:[], detailEdges:[],
+      reticleStyle:'display:none', reticleStyle2:'display:none',
+      detailTitle:'', detailIntro:'', detailKicker:{text:'',color:'#fff'},
+      panelHasFocus:false, panelEmpty:true, panelTitle:'', panelKicker:'', panelBlurb:'',
+      panelColor:'#fff', connections:[], panelEnter:false, panelEnterBorder:'', panelEnterBg:'',
+      panelHasConn:false, panelConnLabel:'', panelHasRes:false, panelVenues:'', panelBook:'' };
+
+    if(isGalaxy){
+      const focus = S.hovered || S.selected;
+      const hi = focus ? new Set([focus, ...(this.adj[focus]||[])]) : null;
+      const fhue = focus ? this.hueOf(this.byId[focus].region) : 200;
+
+      out.galaxyEdges = this.E.map(([a,b,w]) => {
+        const A=this.byId[a], B=this.byId[b];
+        const d=this.curve(px(A.x),py(A.y),px(B.x),py(B.y));
+        const focused = focus && (a===focus || b===focus);
+        const stroke = focused ? `oklch(0.82 0.15 ${fhue})` : `oklch(0.78 0.04 250)`;
+        const op = focused ? 0.78 : (hi ? 0.04 : (0.045 + w*0.022));
+        const sw = (0.6 + w*0.55) * (focused ? 2.2 : 1);
+        return { d, stroke, sw: sw.toFixed(2), op: op.toFixed(3) };
+      });
+
+      const rings = [];
+      out.galaxyNodes = this.N.map(a => {
+        const n = this.byId[a[0]];
+        const X=px(n.x), Y=py(n.y);
+        const isExt = n.region==='ext';
+        const isBig = this.BIG.includes(n.id);
+        const hue = this.hueOf(n.region);
+        const cMain = n.region==='glue' ? `oklch(0.9 0.1 92)` : `oklch(0.82 0.16 ${hue})`;
+        const cDark = `oklch(0.46 0.13 ${hue})`;
+        const dim = hi && !hi.has(n.id);
+        const isFocus = focus===n.id;
+        const inHi = hi && hi.has(n.id);
+        const r = (isExt ? 5 : (5 + n.w*3.2)) + (isBig?3:0);
+        let glow = 6 + n.w*5; if(inHi) glow *= 1.7;
+        const galpha = isExt ? 0.35 : (inHi ? 0.85 : 0.55);
+        const sc = isFocus ? 1.2 : (inHi ? 1.06 : 1);
+        const z = isFocus ? 6 : (inHi ? 5 : (dim ? 2 : 3));
+        let coreStyle;
+        if(isExt){
+          coreStyle = `position:absolute;left:${(X-r).toFixed(1)}px;top:${(Y-r).toFixed(1)}px;width:${2*r}px;height:${2*r}px;border-radius:50%;background:oklch(0.72 0.04 250);box-shadow:0 0 ${glow.toFixed(0)}px oklch(0.72 0.05 250 / ${galpha});opacity:${dim?0.12:0.6};transform:scale(${sc});transition:all .35s;cursor:pointer;z-index:${z}`;
+        } else {
+          const ring = isBig ? `, 0 0 0 2px rgba(255,255,255,${dim?0.18:0.55}), 0 0 0 ${(r*0.62).toFixed(0)}px oklch(0.82 0.16 ${hue} / ${dim?0.05:0.14})` : ``;
+          coreStyle = `position:absolute;left:${(X-r).toFixed(1)}px;top:${(Y-r).toFixed(1)}px;width:${(2*r).toFixed(1)}px;height:${(2*r).toFixed(1)}px;border-radius:50%;background:radial-gradient(circle at 36% 30%, #ffffff 0%, ${cMain} 44%, ${cDark} 100%);box-shadow:0 0 ${glow.toFixed(0)}px oklch(0.8 0.18 ${hue} / ${galpha})${ring};opacity:${dim?0.16:1};transform:scale(${sc});transition:opacity .35s, transform .35s, box-shadow .35s;cursor:pointer;z-index:${z}`
+            + (motion && n.w>=4 ? `;animation:pulse ${(3.5+n.w*0.3).toFixed(1)}s ease-in-out infinite` : ``);
+        }
+        if(isBig && !dim){
+          const hr = 2*r + 16;
+          [0,1.5].forEach(dl => rings.push({ style:`position:absolute;left:${X.toFixed(1)}px;top:${Y.toFixed(1)}px;width:${hr.toFixed(0)}px;height:${hr.toFixed(0)}px;margin-left:${(-hr/2).toFixed(0)}px;margin-top:${(-hr/2).toFixed(0)}px;border-radius:50%;border:1.5px solid oklch(0.84 0.16 ${hue} / .55);pointer-events:none;z-index:2`+(motion?`;animation:halo 3s ease-out ${dl}s infinite`:`;opacity:.18`) }));
+        }
+        let la;
+        if(hi){ la = hi.has(n.id) ? (isFocus ? 1 : 0.92) : 0; }
+        else { la = isExt ? 0.42 : (isBig ? 0.95 : (n.w>=3 ? 0.85 : (labelAll ? 0.55 : 0))); }
+        const lsize = isExt ? 12 : (isBig ? 17 : (n.w>=4 ? 16 : (n.w>=3 ? 15 : 13)));
+        const lweight = isBig ? 700 : 600;
+        const lcolor = isExt ? `oklch(0.78 0.04 250 / ${la})` : `rgba(236,240,250,${la})`;
+        const labelStyle = `position:absolute;left:${X.toFixed(1)}px;top:${(Y+r+7).toFixed(1)}px;transform:translateX(-50%);font:${isExt?'italic 500':lweight} ${lsize}px 'Space Grotesk';color:${lcolor};white-space:nowrap;pointer-events:none;text-shadow:0 1px 7px rgba(0,0,0,.85);letter-spacing:.2px;transition:color .35s;z-index:7`;
+        return {
+          id:n.id, coreStyle, labelStyle, label:n.label,
+          onClick:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); if(this._moved) return; if(this.BIG.includes(n.id)) this.enter(n.id); else this.setState(st=>({selected: st.selected===n.id?null:n.id})); },
+          onEnter:()=> this.setState({ hovered:n.id })
+        };
+      });
+      out.bigRings = rings;
+
+      if(focus){
+        const f=this.byId[focus], hue=this.hueOf(f.region);
+        out.panelHasFocus=true; out.panelEmpty=false;
+        out.panelTitle=f.label; out.panelBlurb=f.blurb;
+        out.panelColor=`oklch(0.82 0.14 ${hue})`; out.panelKicker=this.regionName(f.region);
+        out.panelEnter=this.BIG.includes(focus);
+        out.panelEnterBorder=`oklch(0.82 0.15 ${hue} / .5)`; out.panelEnterBg=`oklch(0.82 0.15 ${hue} / .12)`;
+        out.panelHasConn=true; out.panelConnLabel='CONNECTS TO';
+        out.connections=(this.adj[focus]||[]).map(id=>{ const m=this.byId[id], h=this.hueOf(m.region);
+          return { label:m.label, style:`font:500 12px 'Space Grotesk';padding:4px 9px;border-radius:20px;border:1px solid oklch(0.82 0.15 ${h} / .5);color:oklch(0.85 0.13 ${h});background:oklch(0.82 0.15 ${h} / .12)` }; });
+        const rr=this.RES[focus]; if(rr){ out.panelHasRes=true; out.panelVenues=rr.v; out.panelBook=rr.b; }
+      }
+      return out;
+    }
+
+    // ---------- DETAIL VIEW ----------
+    const core = this.byId[S.detailId];
+    const D = this.details[S.detailId];
+    const region = D.region || core.region;
+    const hue = this.hueOf(region);
+    const cx=800, cy=496;
+    const focusD = S.dSel || S.dHover;
+    const nodes=[], edges=[];
+
+    // sub layout
+    const subN = D.sub.length, srx=372, sry=240;
+    const subPos = D.sub.map((s,i)=>{ const ang=-Math.PI/2 + i/subN*2*Math.PI; return { x:cx+Math.cos(ang)*srx, y:cy+Math.sin(ang)*sry }; });
+    // rel layout (right hemisphere)
+    const relN = D.rel.length, orx=606, ory=300;
+    const relPos = D.rel.map((rid,i)=>{ const t = relN>1 ? (i/(relN-1)) : 0.5; const deg=-72 + 144*t; const ang=deg*Math.PI/180; return { x:cx+Math.cos(ang)*orx, y:cy+Math.sin(ang)*ory }; });
+
+    // edges core->sub
+    subPos.forEach((p,i)=>{ const fc=focusD===`sub:${i}`; edges.push({ d:this.curve(cx,cy,p.x,p.y), stroke:`oklch(0.82 0.15 ${hue})`, sw:(fc?2.4:1.2).toFixed(2), op:(fc?0.82:0.26).toFixed(2), dash:'' }); });
+    // edges core->rel
+    relPos.forEach((p,i)=>{ const rid=D.rel[i]; const rh=this.hueOf(this.byId[rid].region); const fc=focusD===`rel:${rid}`; edges.push({ d:this.curve(cx,cy,p.x,p.y), stroke:`oklch(0.8 0.12 ${rh})`, sw:(fc?2:1).toFixed(2), op:(fc?0.7:0.16).toFixed(2), dash:'2 9' }); });
+    out.detailEdges = edges;
+
+    // core node
+    const cr=30, cMain=`oklch(0.84 0.15 ${hue})`, cDark=`oklch(0.48 0.13 ${hue})`;
+    nodes.push({
+      coreStyle:`position:absolute;left:${cx-cr}px;top:${cy-cr}px;width:${2*cr}px;height:${2*cr}px;border-radius:50%;background:radial-gradient(circle at 36% 30%, #ffffff 0%, ${cMain} 46%, ${cDark} 100%);box-shadow:0 0 46px oklch(0.8 0.18 ${hue} / .85), 0 0 0 2px rgba(255,255,255,.5), 0 0 0 10px oklch(0.82 0.16 ${hue} / .12);z-index:6;cursor:pointer;transition:all .3s`+(motion?`;animation:pulse 4.5s ease-in-out infinite`:``),
+      labelStyle:`position:absolute;left:${cx}px;top:${cy+cr+10}px;transform:translateX(-50%);font:700 18px 'Space Grotesk';color:#f3f6ff;white-space:nowrap;pointer-events:none;text-shadow:0 1px 8px rgba(0,0,0,.9);letter-spacing:-.2px;z-index:7`,
+      label:D.title,
+      onClick:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); if(this._moved) return; this.setState({ dSel:null, dHover:null }); },
+      onEnter:()=> this.setState({ dHover:null })
+    });
+
+    // sub nodes
+    D.sub.forEach((s,i)=>{ const p=subPos[i]; const fc=focusD===`sub:${i}`; const dimd=focusD && !fc;
+      const r=fc?16:13; const glow=fc?28:14;
+      nodes.push({
+        coreStyle:`position:absolute;left:${(p.x-r).toFixed(1)}px;top:${(p.y-r).toFixed(1)}px;width:${2*r}px;height:${2*r}px;border-radius:50%;background:radial-gradient(circle at 36% 30%, #ffffff 0%, oklch(0.84 0.14 ${hue}) 46%, oklch(0.5 0.12 ${hue}) 100%);box-shadow:0 0 ${glow}px oklch(0.8 0.17 ${hue} / ${fc?0.9:0.6});opacity:${dimd?0.4:1};transform:scale(${fc?1.1:1});transition:all .3s;cursor:pointer;z-index:${fc?6:4}`,
+        labelStyle:`position:absolute;left:${p.x.toFixed(1)}px;top:${(p.y+r+6).toFixed(1)}px;transform:translateX(-50%);font:600 13px 'Space Grotesk';color:rgba(236,240,250,${dimd?0.32:0.9});white-space:nowrap;pointer-events:none;text-shadow:0 1px 7px rgba(0,0,0,.85);transition:all .3s;z-index:7`,
+        label:s[0],
+        onClick:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); if(this._moved) return; this.setState(st=>({ dSel: st.dSel===`sub:${i}`?null:`sub:${i}` })); },
+        onEnter:()=> this.setState({ dHover:`sub:${i}` })
+      });
+    });
+
+    // rel nodes
+    D.rel.forEach((rid,i)=>{ const p=relPos[i]; const m=this.byId[rid]; const rh=this.hueOf(m.region); const key=`rel:${rid}`; const fc=focusD===key; const dimd=focusD && !fc; const big=this.BIG.includes(rid);
+      const r=fc?12:9;
+      nodes.push({
+        coreStyle:`position:absolute;left:${(p.x-r).toFixed(1)}px;top:${(p.y-r).toFixed(1)}px;width:${2*r}px;height:${2*r}px;border-radius:50%;background:radial-gradient(circle at 36% 30%, #ffffff 0%, oklch(0.82 0.14 ${rh}) 48%, oklch(0.48 0.12 ${rh}) 100%);box-shadow:0 0 ${fc?20:11}px oklch(0.8 0.16 ${rh} / ${fc?0.85:0.5})${big?`, 0 0 0 1.5px rgba(255,255,255,${dimd?0.2:0.5}), 0 0 0 5px oklch(0.82 0.16 ${rh} / ${dimd?0.05:0.14})`:''};opacity:${dimd?0.4:0.95};transform:scale(${fc?1.12:1});transition:all .3s;cursor:pointer;z-index:${fc?6:4}`,
+        labelStyle:`position:absolute;left:${p.x.toFixed(1)}px;top:${(p.y+r+6).toFixed(1)}px;transform:translateX(-50%);font:500 12px 'Space Grotesk';color:rgba(214,224,244,${dimd?0.3:0.78});white-space:nowrap;pointer-events:none;text-shadow:0 1px 7px rgba(0,0,0,.85);transition:all .3s;z-index:7`,
+        label:m.label,
+        onClick:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); if(this._moved) return; if(this.BIG.includes(rid)) this.enter(rid); else this.setState(st=>({ dSel: st.dSel===key?null:key })); },
+        onEnter:()=> this.setState({ dHover:key })
+      });
+    });
+    out.detailNodes = nodes;
+
+    out.reticleStyle = `position:absolute;left:${cx}px;top:${cy}px;width:544px;height:544px;margin-left:-272px;margin-top:-272px;border-radius:50%;border:1px dashed oklch(0.84 0.14 ${hue} / .16);pointer-events:none;z-index:2`+(motion?`;animation:ringrot 64s linear infinite`:``);
+    out.reticleStyle2 = `position:absolute;left:${cx}px;top:${cy}px;width:300px;height:300px;margin-left:-150px;margin-top:-150px;border-radius:50%;border:1px solid oklch(0.84 0.14 ${hue} / .10);pointer-events:none;z-index:2`;
+
+    out.detailTitle = D.title;
+    out.detailIntro = core.blurb;
+    out.detailKicker = { text:`${this.regionName(region)} \u00b7 ${subN} SUB-FIELDS`, color:`oklch(0.82 0.14 ${hue})` };
+
+    // detail panel
+    out.panelHasFocus=true; out.panelEmpty=false;
+    if(!focusD){
+      out.panelTitle=D.title; out.panelBlurb=core.blurb;
+      { const rr=this.RES[S.detailId]; if(rr){ out.panelHasRes=true; out.panelVenues=rr.v; out.panelBook=rr.b; } }
+      out.panelColor=`oklch(0.82 0.14 ${hue})`; out.panelKicker=`${this.regionName(region)} \u00b7 galaxy`;
+      out.panelHasConn=true; out.panelConnLabel='SUB-AREAS INSIDE';
+      out.connections=D.sub.map(s=>({ label:s[0], style:`font:500 12px 'Space Grotesk';padding:4px 9px;border-radius:20px;border:1px solid oklch(0.82 0.15 ${hue} / .45);color:oklch(0.86 0.12 ${hue});background:oklch(0.82 0.15 ${hue} / .1)` }));
+    } else if(focusD.indexOf('sub:')===0){
+      const s=D.sub[+focusD.slice(4)];
+      out.panelTitle=s[0]; out.panelBlurb=s[1]; out.panelColor=`oklch(0.82 0.14 ${hue})`;
+      out.panelKicker=`sub-area \u00b7 ${D.title}`; out.panelHasConn=false;
+    } else {
+      const rid=focusD.slice(4); const m=this.byId[rid]; const rh=this.hueOf(m.region); const big=this.BIG.includes(rid);
+      out.panelTitle=m.label; out.panelBlurb=m.blurb; out.panelColor=`oklch(0.82 0.14 ${rh})`;
+      out.panelKicker='neighboring field'; out.panelHasConn=false;
+      out.panelEnter=big; out.panelEnterBorder=`oklch(0.82 0.15 ${rh} / .5)`; out.panelEnterBg=`oklch(0.82 0.15 ${rh} / .12)`;
+      if(big) out.panelColor=`oklch(0.82 0.14 ${rh})`;
+      { const rr=this.RES[rid]; if(rr){ out.panelHasRes=true; out.panelVenues=rr.v; out.panelBook=rr.b; } }
+    }
+    return out;
+  }
+}
+</script>
+</body>
+</html>
