@@ -1,644 +1,768 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
+<title>The Universe of Computer Science</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --sky-0:#0a0e1a; --sky-1:#121a30; --sky-2:#050710;
+    --ink-1:#e8ecf4; --ink-2:#9aa4b8; --ink-3:#5c6575;
+    --line-neutral:#cfd8ff;
+    --panel-bg:rgba(11,15,26,0.9);
+    --panel-border:rgba(255,255,255,0.08);
+    --ring:#0a0e1a;
+    --focus:#e8ecf4;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--sky-2);}
+  body{
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink-1);
+  }
+  .stage{
+    position:relative;
+    width:100%;
+    height:100vh;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse 80% 65% at 50% 42%, var(--sky-1) 0%, var(--sky-0) 55%, var(--sky-2) 100%);
+  }
+  svg.map{ display:block; width:100%; height:100%; }
+
+  /* ---------- entrance ----------
+     NOTE: the animated scale must live on an INNER group with no SVG
+     `transform` attribute. A CSS `transform` on the outer .node group would
+     replace (not compose with) its `transform="translate(x,y)"` attribute,
+     since the SVG attribute is just a low-priority presentation value for the
+     same CSS property — every node would render at the local origin. */
+  .node-inner{ opacity:0; transform:scale(.4); transform-box:fill-box; transform-origin:center; animation:nodeIn .6s cubic-bezier(.2,.8,.3,1) forwards; }
+  @keyframes nodeIn{ to{ opacity:1; transform:scale(1); } }
+  .links-layer{ opacity:0; animation:fadeIn .9s ease forwards; animation-delay:.55s; }
+  @keyframes fadeIn{ to{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    .node-inner{ opacity:1; transform:none; animation:none; }
+    .links-layer{ opacity:1; animation:none; }
+  }
+
+  /* ---------- twinkle (motion-safe only) ---------- */
+  @media (prefers-reduced-motion: no-preference){
+    .twinkle{ animation:twinkle var(--dur,4s) ease-in-out var(--delay,0s) infinite; }
+  }
+  @keyframes twinkle{ 0%,100%{ opacity:var(--op-lo); } 50%{ opacity:var(--op-hi); } }
+
+  /* ---------- marks ---------- */
+  .node{ cursor:pointer; transition:opacity .2s ease; }
+  .node .halo{ transition:opacity .2s ease; }
+  .node .dot,.node .core,.node .flare,.node .glint{ transition:transform .2s ease, opacity .2s ease; transform-box:fill-box; transform-origin:center; }
+  .node.dim{ opacity:.22; }
+  .node.lit .halo{ opacity:.85; }
+  .node.connected .halo{ opacity:.6; }
+  .node.lit .dot{ transform:scale(1.5); }
+  .node.connected .dot{ transform:scale(1.2); }
+  .node.lit .core{ transform:scale(1.28); }
+  .node.connected .core{ transform:scale(1.12); }
+  .node .hit{ fill:transparent; cursor:pointer; }
+  .node .hit:focus{ outline:none; }
+  .node .hit:focus-visible ~ .focus-ring, .node.kbd-focus .focus-ring{ opacity:1; }
+  .focus-ring{ fill:none; stroke:var(--focus); stroke-width:1.4; opacity:0; transition:opacity .15s ease; }
+
+  .link{ transition:opacity .2s ease, stroke-width .2s ease; fill:none; }
+  .link.dim{ opacity:.08; }
+  .link.lit{ opacity:.95; stroke-width:2.4; }
+
+  .label{ font-size:11px; fill:var(--ink-2); pointer-events:none; transition:opacity .2s ease, fill .2s ease; user-select:none; }
+  .label.cat-label{ font-size:12.5px; letter-spacing:.09em; text-transform:uppercase; fill:var(--ink-1); font-weight:600; }
+  .node.dim .label{ opacity:.18; }
+  .node.lit .label{ fill:var(--ink-1); }
+
+  .nebula{ pointer-events:none; }
+
+  /* ---------- edge captions ---------- */
+  .axis-caption{ font-size:11px; letter-spacing:.16em; fill:var(--ink-3); text-transform:uppercase; pointer-events:none; }
+
+  /* ---------- overlays ---------- */
+  .overlay{ position:absolute; pointer-events:none; }
+  .overlay a, .overlay button, .overlay summary, .overlay [tabindex]{ pointer-events:auto; }
+
+  .hero-title{ top:28px; left:32px; max-width:min(46vw,520px); }
+  .hero-title h1{ margin:0 0 6px; font-size:clamp(20px,2.6vw,30px); font-weight:300; letter-spacing:.02em; color:var(--ink-1); }
+  .hero-title p{ margin:0; font-size:13px; line-height:1.5; color:var(--ink-2); max-width:44ch; }
+
+  .legend{ bottom:28px; left:32px; display:flex; flex-direction:column; gap:6px; background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:10px; padding:12px 14px; backdrop-filter:blur(6px); pointer-events:auto; }
+  .legend h2{ margin:0 0 4px; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); font-weight:600; }
+  .legend-row{ display:flex; align-items:center; gap:8px; background:none; border:none; padding:3px 4px; border-radius:6px; font-size:12.5px; color:var(--ink-2); cursor:pointer; text-align:left; font-family:inherit; }
+  .legend-row:hover,.legend-row:focus-visible{ background:rgba(255,255,255,0.06); color:var(--ink-1); outline:none; }
+  .legend-dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; box-shadow:0 0 6px 1px currentColor; }
+
+  .listbtn{ top:28px; right:32px; }
+  .listbtn button{ background:var(--panel-bg); border:1px solid var(--panel-border); color:var(--ink-2); font-size:12px; padding:8px 14px; border-radius:20px; cursor:pointer; letter-spacing:.03em; backdrop-filter:blur(6px); }
+  .listbtn button:hover,.listbtn button:focus-visible{ color:var(--ink-1); border-color:rgba(255,255,255,0.2); outline:none; }
+
+  .panel{
+    top:0; right:0; height:100%; width:min(360px,88vw);
+    background:var(--panel-bg); border-left:1px solid var(--panel-border);
+    backdrop-filter:blur(10px);
+    padding:88px 26px 26px;
+    transform:translateX(100%); transition:transform .28s cubic-bezier(.2,.8,.3,1);
+    overflow-y:auto; pointer-events:auto;
+  }
+  .panel.open{ transform:translateX(0); }
+  .panel-badge{ display:inline-flex; align-items:center; gap:7px; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin-bottom:14px; }
+  .panel-badge .dot{ width:8px; height:8px; border-radius:50%; box-shadow:0 0 6px 1px currentColor; }
+  .panel h3{ margin:0 0 12px; font-size:21px; font-weight:500; line-height:1.25; color:var(--ink-1); }
+  .panel p.intro{ font-size:13.5px; line-height:1.65; color:var(--ink-2); margin:0 0 20px; }
+  .panel .field{ margin-bottom:16px; }
+  .panel .field h4{ margin:0 0 5px; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); font-weight:600; }
+  .panel .field div{ font-size:13px; line-height:1.55; color:var(--ink-1); }
+  .panel .coords{ display:flex; gap:18px; margin-top:22px; padding-top:16px; border-top:1px solid var(--panel-border); }
+  .panel .coords div{ font-size:11px; color:var(--ink-3); }
+  .panel .coords strong{ display:block; font-size:15px; font-weight:500; color:var(--ink-2); }
+  .panel-close{ position:absolute; top:26px; right:22px; background:none; border:none; color:var(--ink-3); font-size:20px; line-height:1; cursor:pointer; padding:4px; }
+  .panel-close:hover{ color:var(--ink-1); }
+
+  @media (max-width:700px){
+    /* Lock the stage to the viewBox's own aspect ratio instead of 100vh —
+       otherwise a portrait phone screen forces "meet" scaling to fit width,
+       and the wide star map letterboxes into a thin horizontal sliver with
+       huge dead space above and below. */
+    .stage{ height:auto; aspect-ratio:1200/840; }
+    .label:not(.cat-label){ display:none; }
+    .hero-title{ max-width:70vw; }
+    .hero-title p{ display:none; }
+    .legend{
+      left:10px; right:10px; bottom:10px; width:auto;
+      flex-direction:row; flex-wrap:wrap; align-items:center;
+      gap:4px 12px; padding:8px 10px;
+    }
+    .legend h2{ width:100%; margin:0 0 2px; }
+    .legend-row{ font-size:10.5px; padding:2px 3px; gap:5px; }
+    .panel{
+      top:auto; bottom:0; left:0; right:0; height:auto; max-height:46vh; width:auto;
+      border-left:none; border-top:1px solid var(--panel-border);
+      transform:translateY(100%); padding:22px 20px 26px;
+    }
+    .panel.open{ transform:translateY(0); }
+  }
+
+  /* ---------- table view ---------- */
+  .table-section{ background:var(--sky-2); padding:64px 32px 90px; }
+  .table-section h2{ font-weight:300; font-size:24px; margin:0 0 6px; letter-spacing:.01em; }
+  .table-section > p{ color:var(--ink-2); font-size:13px; margin:0 0 26px; max-width:60ch; }
+  .table-wrap{ overflow-x:auto; border:1px solid var(--panel-border); border-radius:10px; }
+  table{ border-collapse:collapse; width:100%; min-width:900px; font-size:13px; }
+  thead th{ text-align:left; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:600; padding:12px 14px; border-bottom:1px solid var(--panel-border); position:sticky; top:0; background:var(--sky-2); }
+  tbody td{ padding:11px 14px; border-bottom:1px solid rgba(255,255,255,0.05); color:var(--ink-2); vertical-align:top; }
+  tbody tr:hover td{ background:rgba(255,255,255,0.03); color:var(--ink-1); }
+  td.name-cell{ color:var(--ink-1); font-weight:500; white-space:nowrap; }
+  .swatch{ display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:8px; box-shadow:0 0 5px 1px currentColor; }
+  td.num{ font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .skip-link{ position:absolute; left:-9999px; top:0; background:var(--ink-1); color:var(--sky-2); padding:10px 16px; border-radius:6px; z-index:100; }
+  .skip-link:focus{ left:16px; top:16px; }
+</style>
 </head>
 <body>
-<x-dc>
-<helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;background:#04050b;overflow:hidden;font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased}
-@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.85}}
-@keyframes pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.32)}}
-@keyframes drift{0%{transform:translate(0,0)}50%{transform:translate(12px,-14px)}100%{transform:translate(0,0)}}
-@keyframes halo{0%{transform:scale(.72);opacity:.5}80%{opacity:0}100%{transform:scale(1.75);opacity:0}}
-@keyframes ringrot{to{transform:rotate(360deg)}}
-@keyframes zoomin{0%{opacity:0;transform:scale(1.16)}100%{opacity:1;transform:scale(1)}}
-@keyframes fadein{from{opacity:0}to{opacity:1}}
-</style>
-</helmet>
 
-<template id="__bundler_thumbnail" data-bg-color="#070a14">
-  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
-    <rect width="1200" height="800" fill="#070a14"></rect>
-    <circle cx="500" cy="260" r="220" fill="#7b5cf0" opacity="0.16"></circle>
-    <circle cx="820" cy="520" r="220" fill="#e36fbe" opacity="0.16"></circle>
-    <circle cx="360" cy="560" r="180" fill="#f0a24a" opacity="0.14"></circle>
-    <line x1="500" y1="300" x2="780" y2="500" stroke="#9aa8cd" stroke-width="2" opacity="0.4"></line>
-    <line x1="500" y1="300" x2="420" y2="540" stroke="#9aa8cd" stroke-width="2" opacity="0.4"></line>
-    <line x1="780" y1="500" x2="900" y2="360" stroke="#9aa8cd" stroke-width="2" opacity="0.4"></line>
-    <circle cx="500" cy="300" r="26" fill="#b79cff"></circle>
-    <circle cx="780" cy="500" r="30" fill="#f08fce"></circle>
-    <circle cx="420" cy="540" r="20" fill="#f5b86a"></circle>
-    <circle cx="900" cy="360" r="18" fill="#7fc6f0"></circle>
-    <text x="600" y="710" fill="#eef2fb" font-family="monospace" font-size="40" text-anchor="middle" letter-spacing="8">CS UNIVERSE</text>
+<a class="skip-link" href="#table-view">Skip to list view of all areas</a>
+
+<div class="stage" id="stage">
+  <svg class="map" id="map" viewBox="0 0 1200 840" role="img" aria-label="An interactive star map of computer science areas, positioned by how abstract or concrete they are, and how machine- or human-facing they are.">
+    <defs id="defs"></defs>
+    <g id="starfield" aria-hidden="true"></g>
+    <g id="nebulae" aria-hidden="true"></g>
+    <g id="axis-captions" aria-hidden="true"></g>
+    <g id="links" class="links-layer"></g>
+    <g id="nodes"></g>
   </svg>
-</template>
 
-<div style="position:fixed;inset:0;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;background:radial-gradient(ellipse at 50% 38%, #0c1224 0%, #070a14 52%, #04050b 100%)" onClick="{{ onBg }}" onMouseDown="{{ onDown }}">
-
-  <div style="{{ stageStyle }}">
-
-    <sc-for list="{{ stars }}" as="st" hint-placeholder-count="0">
-      <div style="{{ st.style }}"></div>
-    </sc-for>
-
-    <div style="position:absolute;left:362px;top:-150px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 280 / .15), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 26s ease-in-out infinite"></div>
-    <div style="position:absolute;left:42px;top:430px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 42 / .13), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 31s ease-in-out infinite"></div>
-    <div style="position:absolute;left:330px;top:130px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 162 / .11), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 28s ease-in-out infinite"></div>
-    <div style="position:absolute;left:714px;top:290px;width:660px;height:660px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 330 / .14), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 33s ease-in-out infinite"></div>
-    <div style="position:absolute;left:906px;top:30px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 200 / .12), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 29s ease-in-out infinite"></div>
-    <div style="position:absolute;left:-22px;top:110px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle, oklch(0.62 0.2 16 / .11), transparent 68%);filter:blur(34px);mix-blend-mode:screen;pointer-events:none;z-index:1;animation:drift 30s ease-in-out infinite"></div>
-
-    <sc-if value="{{ isGalaxy }}" hint-placeholder-val="{{ true }}">
-    <div style="position:absolute;inset:0;animation:fadein .4s ease both">
-
-      <div style="position:absolute;left:672px;top:116px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">THEORY</div>
-      <div style="position:absolute;left:352px;top:704px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">SYSTEMS</div>
-      <div style="position:absolute;left:632px;top:398px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">LANGUAGES</div>
-      <div style="position:absolute;left:1024px;top:560px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">INTELLIGENCE</div>
-      <div style="position:absolute;left:1216px;top:300px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">INTERFACE</div>
-      <div style="position:absolute;left:288px;top:372px;transform:translateX(-50%);font:500 24px 'JetBrains Mono';letter-spacing:9px;color:rgba(220,228,255,.06);pointer-events:none;z-index:1;white-space:nowrap">SECURITY</div>
-
-      <svg viewBox="0 0 1600 1000" style="position:absolute;inset:0;width:1600px;height:1000px;pointer-events:none;z-index:1">
-        <defs>
-          <linearGradient id="axh" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#9fb2da" stop-opacity="0"></stop>
-            <stop offset="0.13" stop-color="#9fb2da" stop-opacity="0.30"></stop>
-            <stop offset="0.5" stop-color="#9fb2da" stop-opacity="0.05"></stop>
-            <stop offset="0.87" stop-color="#9fb2da" stop-opacity="0.30"></stop>
-            <stop offset="1" stop-color="#9fb2da" stop-opacity="0"></stop>
-          </linearGradient>
-          <linearGradient id="axv" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#9fb2da" stop-opacity="0"></stop>
-            <stop offset="0.14" stop-color="#9fb2da" stop-opacity="0.28"></stop>
-            <stop offset="0.5" stop-color="#9fb2da" stop-opacity="0.05"></stop>
-            <stop offset="0.86" stop-color="#9fb2da" stop-opacity="0.28"></stop>
-            <stop offset="1" stop-color="#9fb2da" stop-opacity="0"></stop>
-          </linearGradient>
-        </defs>
-        <line x1="92" y1="500" x2="1508" y2="500" stroke="url(#axh)" stroke-width="1.3"></line>
-        <line x1="800" y1="80" x2="800" y2="920" stroke="url(#axv)" stroke-width="1.3"></line>
-        <polygon points="104,494 104,506 92,500" fill="#9fb2da" fill-opacity="0.42"></polygon>
-        <polygon points="1496,494 1496,506 1508,500" fill="#9fb2da" fill-opacity="0.42"></polygon>
-        <polygon points="794,92 806,92 800,80" fill="#9fb2da" fill-opacity="0.42"></polygon>
-        <polygon points="794,908 806,908 800,920" fill="#9fb2da" fill-opacity="0.42"></polygon>
-      </svg>
-
-      <div style="position:absolute;left:800px;top:-50px;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:8">
-        <div style="font:600 14px 'JetBrains Mono';letter-spacing:5px;color:rgba(190,205,235,.62)">ABSTRACT &#8593;</div>
-        <div style="font:400 11px 'Space Grotesk';letter-spacing:1px;color:rgba(150,168,205,.42);margin-top:3px">theory &#183; proofs &#183; math</div>
-      </div>
-      <div style="position:absolute;left:800px;top:1008px;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:8">
-        <div style="font:400 11px 'Space Grotesk';letter-spacing:1px;color:rgba(150,168,205,.42);margin-bottom:3px">silicon &#183; pixels &#183; devices</div>
-        <div style="font:600 14px 'JetBrains Mono';letter-spacing:5px;color:rgba(190,205,235,.62)">&#8595; CONCRETE</div>
-      </div>
-      <div style="position:absolute;left:-22px;top:500px;transform:translateY(-50%);pointer-events:none;z-index:8">
-        <div style="font:600 14px 'JetBrains Mono';letter-spacing:4px;color:rgba(190,205,235,.62);white-space:nowrap">&#9664; MACHINE</div>
-        <div style="font:400 11px 'Space Grotesk';letter-spacing:1px;color:rgba(150,168,205,.42);margin-top:3px;white-space:nowrap">closer to hardware</div>
-      </div>
-      <div style="position:absolute;left:1618px;top:500px;transform:translate(-100%,-50%);text-align:right;pointer-events:none;z-index:8">
-        <div style="font:600 14px 'JetBrains Mono';letter-spacing:4px;color:rgba(190,205,235,.62);white-space:nowrap">HUMAN &#9658;</div>
-        <div style="font:400 11px 'Space Grotesk';letter-spacing:1px;color:rgba(150,168,205,.42);margin-top:3px;white-space:nowrap">closer to people</div>
-      </div>
-
-      <svg viewBox="0 0 1600 1000" style="position:absolute;inset:0;width:1600px;height:1000px;overflow:visible;pointer-events:none;z-index:2">
-        <sc-for list="{{ galaxyEdges }}" as="e" hint-placeholder-count="0">
-          <path d="{{ e.d }}" stroke="{{ e.stroke }}" stroke-width="{{ e.sw }}" stroke-opacity="{{ e.op }}" fill="none" stroke-linecap="round"></path>
-        </sc-for>
-      </svg>
-
-      <sc-for list="{{ bigRings }}" as="b" hint-placeholder-count="0">
-        <div style="{{ b.style }}"></div>
-      </sc-for>
-
-      <sc-for list="{{ galaxyNodes }}" as="n" hint-placeholder-count="0">
-        <div style="{{ n.coreStyle }}" onClick="{{ n.onClick }}" onMouseEnter="{{ n.onEnter }}" onMouseLeave="{{ gLeave }}"></div>
-      </sc-for>
-      <sc-for list="{{ galaxyNodes }}" as="n" hint-placeholder-count="0">
-        <div style="{{ n.labelStyle }}">{{ n.label }}</div>
-      </sc-for>
-
-    </div>
-    </sc-if>
-
-    <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;inset:0;animation:zoomin .5s cubic-bezier(.2,.8,.25,1) both">
-
-      <div style="{{ reticleStyle }}"></div>
-      <div style="{{ reticleStyle2 }}"></div>
-
-      <svg viewBox="0 0 1600 1000" style="position:absolute;inset:0;width:1600px;height:1000px;overflow:visible;pointer-events:none;z-index:2">
-        <sc-for list="{{ detailEdges }}" as="e" hint-placeholder-count="0">
-          <path d="{{ e.d }}" stroke="{{ e.stroke }}" stroke-width="{{ e.sw }}" stroke-opacity="{{ e.op }}" stroke-dasharray="{{ e.dash }}" fill="none" stroke-linecap="round"></path>
-        </sc-for>
-      </svg>
-
-      <sc-for list="{{ detailNodes }}" as="n" hint-placeholder-count="0">
-        <div style="{{ n.coreStyle }}" onClick="{{ n.onClick }}" onMouseEnter="{{ n.onEnter }}" onMouseLeave="{{ dLeave }}"></div>
-      </sc-for>
-      <sc-for list="{{ detailNodes }}" as="n" hint-placeholder-count="0">
-        <div style="{{ n.labelStyle }}">{{ n.label }}</div>
-      </sc-for>
-
-    </div>
-    </sc-if>
-
+  <div class="overlay hero-title">
+    <h1>The Universe of Computer Science</h1>
+    <p>Every star is a field of study. Position runs abstract&nbsp;→&nbsp;concrete left to right, and machine&nbsp;→&nbsp;human bottom to top. Lines are the connections between them &mdash; hover or tab to any star to explore.</p>
   </div>
 
-  <div style="position:absolute;left:0;top:0;width:540px;height:400px;background:radial-gradient(ellipse 90% 90% at top left, rgba(5,7,14,.94), rgba(5,7,14,.55) 46%, transparent 76%);pointer-events:none;z-index:15"></div>
-  <div style="position:absolute;left:0;bottom:0;width:470px;height:300px;background:radial-gradient(ellipse 90% 90% at bottom left, rgba(5,7,14,.85), rgba(5,7,14,.4) 50%, transparent 78%);pointer-events:none;z-index:15"></div>
-
-  <sc-if value="{{ isGalaxy }}" hint-placeholder-val="{{ true }}">
-  <div style="position:absolute;left:34px;top:30px;z-index:20;max-width:380px;pointer-events:none">
-    <div style="font:500 12px 'JetBrains Mono';letter-spacing:4px;color:oklch(0.78 0.12 200);margin-bottom:11px">// AN ATLAS OF THE FIELD</div>
-    <div style="font:700 40px/1.04 'Space Grotesk';color:#eef2fb;letter-spacing:-1.2px">The Computer<br>Science Universe</div>
-    <div style="font:400 14px/1.55 'Space Grotesk';color:rgba(200,210,230,.6);margin-top:13px;max-width:344px">A topological map of the field — abstraction rises to the top, machines sit left, people sit right. The six ringed stars are whole galaxies; click one to dive in.</div>
+  <div class="overlay listbtn">
+    <button id="openList" type="button">View as list ↓</button>
   </div>
 
-  <div style="position:absolute;right:28px;top:28px;z-index:20;width:252px;background:rgba(10,13,22,.66);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;pointer-events:none">
-    <div style="font:500 10px 'JetBrains Mono';letter-spacing:3px;color:rgba(160,172,196,.7);margin-bottom:13px">MAP LEGEND</div>
-    <div style="display:flex;flex-direction:column;gap:9px">
-      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 280);box-shadow:0 0 9px oklch(0.8 0.18 280 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Theory</span></div>
-      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 162);box-shadow:0 0 9px oklch(0.8 0.18 162 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Software &amp; Languages</span></div>
-      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 42);box-shadow:0 0 9px oklch(0.8 0.18 42 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Systems &amp; Architecture</span></div>
-      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 330);box-shadow:0 0 9px oklch(0.8 0.18 330 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">AI &amp; Data</span></div>
-      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 200);box-shadow:0 0 9px oklch(0.8 0.18 200 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Human-Centric</span></div>
-      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.82 0.16 16);box-shadow:0 0 9px oklch(0.8 0.18 16 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Security &amp; Privacy</span></div>
-      <div style="display:flex;align-items:center;gap:10px"><span style="width:11px;height:11px;border-radius:50%;background:oklch(0.9 0.1 92);box-shadow:0 0 9px oklch(0.88 0.12 92 / .7)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Intersectional glue</span></div>
-    </div>
-    <div style="height:1px;background:rgba(255,255,255,.08);margin:14px 0"></div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#fff,oklch(0.82 0.16 280) 50%,oklch(0.46 0.13 280));box-shadow:0 0 0 1.5px rgba(255,255,255,.6),0 0 0 5px oklch(0.82 0.16 280 / .18),0 0 10px oklch(0.8 0.18 280 / .8)"></span><span style="font:500 12px 'Space Grotesk';color:#d6dcec;white-space:nowrap">Big star = a galaxy to enter</span></div>
-    <div style="font:400 11.5px/1.5 'Space Grotesk';color:rgba(180,190,212,.66)">Node size = research volume.<br>Bridge weight = how tightly two fields couple today.</div>
-  </div>
-  </sc-if>
-
-  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
-  <div style="position:absolute;left:34px;top:30px;z-index:20;max-width:400px">
-    <div onClick="{{ onBack }}" style="display:inline-flex;align-items:center;gap:7px;pointer-events:auto;cursor:pointer;font:500 12px 'JetBrains Mono';letter-spacing:1.5px;color:rgba(190,205,235,.82);background:rgba(12,16,26,.7);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:7px 14px;margin-bottom:16px" style-hover="display:inline-flex;align-items:center;gap:7px;pointer-events:auto;cursor:pointer;font:500 12px 'JetBrains Mono';letter-spacing:1.5px;color:#fff;background:rgba(22,28,42,.85);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:7px 14px;margin-bottom:16px">&#9664; THE UNIVERSE</div>
-    <div style="pointer-events:none">
-      <div style="font:500 12px 'JetBrains Mono';letter-spacing:3px;color:{{ detailKicker.color }};margin-bottom:9px;text-transform:uppercase">{{ detailKicker.text }}</div>
-      <div style="font:700 38px/1.05 'Space Grotesk';color:#eef2fb;letter-spacing:-1px">{{ detailTitle }}</div>
-      <div style="font:400 13.5px/1.5 'Space Grotesk';color:rgba(200,210,230,.62);margin-top:11px;max-width:360px">{{ detailIntro }}</div>
-    </div>
-  </div>
-  </sc-if>
-
-  <div style="position:absolute;left:34px;bottom:30px;z-index:20;width:362px;background:rgba(10,13,22,.74);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:20px 22px;min-height:118px;transition:all .3s">
-    <sc-if value="{{ panelHasFocus }}" hint-placeholder-val="{{ false }}">
-      <div>
-        <div style="font:500 11px 'JetBrains Mono';letter-spacing:2.5px;color:{{ panelColor }};margin-bottom:9px;text-transform:uppercase">{{ panelKicker }}</div>
-        <div style="font:700 23px 'Space Grotesk';color:#eff3fc;margin-bottom:9px;letter-spacing:-.3px">{{ panelTitle }}</div>
-        <div style="font:400 14px/1.5 'Space Grotesk';color:rgba(205,214,232,.8);margin-bottom:14px">{{ panelBlurb }}</div>
-        <sc-if value="{{ panelHasRes }}" hint-placeholder-val="{{ false }}">
-          <div style="margin-bottom:14px;padding:12px 13px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:9px">
-            <div style="font:500 9.5px 'JetBrains Mono';letter-spacing:2px;color:rgba(160,172,196,.72);margin-bottom:4px">KEY VENUES</div>
-            <div style="font:400 12.5px/1.4 'Space Grotesk';color:rgba(216,226,246,.86);margin-bottom:11px">{{ panelVenues }}</div>
-            <div style="font:500 9.5px 'JetBrains Mono';letter-spacing:2px;color:rgba(160,172,196,.72);margin-bottom:4px">START HERE &#128218;</div>
-            <div style="font:400 12.5px/1.4 'Space Grotesk';color:rgba(216,226,246,.86)">{{ panelBook }}</div>
-          </div>
-        </sc-if>
-        <sc-if value="{{ panelEnter }}" hint-placeholder-val="{{ false }}">
-          <div style="display:inline-block;font:600 11px 'JetBrains Mono';letter-spacing:1.5px;color:{{ panelColor }};border:1px solid {{ panelEnterBorder }};background:{{ panelEnterBg }};border-radius:7px;padding:6px 11px;margin-bottom:4px">&#10530; CLICK TO ENTER THIS GALAXY</div>
-        </sc-if>
-        <sc-if value="{{ panelHasConn }}" hint-placeholder-val="{{ true }}">
-          <div>
-            <div style="font:500 10px 'JetBrains Mono';letter-spacing:2px;color:rgba(160,172,196,.7);margin-bottom:9px">{{ panelConnLabel }}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px">
-              <sc-for list="{{ connections }}" as="c" hint-placeholder-count="0">
-                <span style="{{ c.style }}">{{ c.label }}</span>
-              </sc-for>
-            </div>
-          </div>
-        </sc-if>
-      </div>
-    </sc-if>
-    <sc-if value="{{ panelEmpty }}" hint-placeholder-val="{{ true }}">
-      <div>
-        <div style="font:500 11px 'JetBrains Mono';letter-spacing:2.5px;color:oklch(0.78 0.12 200);margin-bottom:9px">EXPLORE</div>
-        <div style="font:400 15px/1.55 'Space Grotesk';color:rgba(210,218,236,.82)">Hover any field to light up its connections and field guide. The six ringed stars are galaxies — click one to zoom inside. Drag anywhere to pan the map.</div>
-      </div>
-    </sc-if>
+  <div class="overlay legend" id="legend">
+    <h2>Big categories</h2>
   </div>
 
-  <sc-if value="{{ panned }}" hint-placeholder-val="{{ false }}">
-    <div onClick="{{ onRecenter }}" style="position:absolute;right:28px;bottom:30px;z-index:21;pointer-events:auto;cursor:pointer;font:500 11px 'JetBrains Mono';letter-spacing:1.5px;color:rgba(190,205,235,.85);background:rgba(12,16,26,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:8px 14px" style-hover="position:absolute;right:28px;bottom:30px;z-index:21;pointer-events:auto;cursor:pointer;font:500 11px 'JetBrains Mono';letter-spacing:1.5px;color:#fff;background:rgba(22,28,42,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.24);border-radius:20px;padding:8px 14px">&#10530; RECENTER</div>
-  </sc-if>
-
+  <aside class="overlay panel" id="panel" aria-live="polite" aria-hidden="true">
+    <button class="panel-close" id="panelClose" type="button" aria-label="Close">&times;</button>
+    <div id="panelBody"></div>
+  </aside>
 </div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;ambientMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;labelMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;major&quot;,&quot;all&quot;],&quot;default&quot;:&quot;all&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
-class Component extends DCLogic {
-  state = { hovered: null, selected: null, view: 'galaxy', detailId: null, dHover: null, dSel: null, panX: 0, panY: 0 };
-  _clamp(v){ return Math.max(-1000, Math.min(1000, v)); }
-  onMove = (e) => { if(!this._md) return; if(Math.abs(e.clientX-this._dx)+Math.abs(e.clientY-this._dy)>4) this._moved=true; this.setState({ panX:this._clamp(e.clientX-this._sx), panY:this._clamp(e.clientY-this._sy) }); };
-  onUp = () => { this._md=false; };
 
-  hueOf(r){ return ({theory:280,systems:42,software:162,ai:330,hci:200,security:16,glue:92,ext:250})[r] ?? 250; }
-  regionName(r){ return ({theory:'Theoretical CS',systems:'Systems & Architecture',software:'Software & Languages',ai:'AI & Data',hci:'Human-Centric Computing',security:'Security & Privacy',glue:'Intersectional Field',ext:'Adjacent Discipline'})[r]; }
+<section class="table-section" id="table-view">
+  <h2>Every area, as a list</h2>
+  <p>The full contents of the map in table form &mdash; every field reachable without hovering, for keyboard and screen-reader use.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Category</th>
+          <th>Abstract → Concrete</th>
+          <th>Machine → Human</th>
+          <th>Top venues</th>
+          <th>Start here</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</section>
 
-  build(){
-    const N = [
-      ['t_alg','Algorithms & Data Structures','theory',0.40,0.20,5,'The grammar of efficient computation — how to structure data and steps to solve problems provably well.'],
-      ['t_complex','Computability & Complexity','theory',0.46,0.085,3,'What can be computed at all, and what it truly costs in time and space.'],
-      ['t_info','Information Theory','theory',0.57,0.13,2,'Quantifying information, compression, and the ultimate limits of communication.'],
-      ['t_formal','Formal Methods & Verification','theory',0.31,0.135,2,'Proving software correct with mathematical rigor instead of testing alone.'],
-      ['t_crypto','Cryptography','theory',0.255,0.27,3,'Turning hard math problems into secrets, signatures, and trust.'],
-      ['t_colt','Computational Learning Theory','theory',0.525,0.30,3,'The mathematics of learning itself — what is learnable, from how many examples, and how efficiently (PAC learning, VC dimension, generalization bounds).'],
-      ['s_arch','Computer Architecture','systems',0.12,0.86,4,'The silicon engine room — processors, memory, and the machine beneath the machine.'],
-      ['s_os','Operating Systems','systems',0.21,0.72,4,'The conductor that shares one machine among every program at once.'],
-      ['s_dist','Distributed Systems & Cloud','systems',0.35,0.60,4,'Thousands of machines cooperating as one reliable, planet-scale computer.'],
-      ['s_net','Computer Networks','systems',0.27,0.80,3,'The protocols and plumbing that move bits across the world.'],
-      ['s_db','Database Systems','systems',0.435,0.685,3,'Storing, querying, and protecting data at massive scale.'],
-      ['s_embed','Embedded & Real-Time','systems',0.10,0.65,2,'Computing woven into physical devices, where milliseconds are deadlines.'],
-      ['sw_pl','Programming Languages','software',0.38,0.36,3,'Designing the notations we use to express computation — and their precise meaning.'],
-      ['sw_comp','Compilers & Interpreters','software',0.30,0.46,2,'Translating human-friendly code into instructions a machine can run.'],
-      ['sw_eng','Software Engineering','software',0.46,0.505,4,'Building, maintaining, and scaling large software with real teams.'],
-      ['ai_ml','Machine Learning','ai',0.62,0.56,5,'Systems that learn patterns from data instead of being explicitly programmed.'],
-      ['ai_nlp','Natural Language Processing','ai',0.735,0.50,4,'Teaching machines to read, write, and converse in human language.'],
-      ['ai_cv','Computer Vision','ai',0.71,0.64,4,'Giving machines the ability to see and interpret the visual world.'],
-      ['ai_rob','Robotics & Control','ai',0.60,0.80,3,'Perception, planning, and action in physical, uncertain environments.'],
-      ['ai_data','Data Mining & Big Data','ai',0.52,0.645,3,'Finding meaningful structure in oceans of raw data.'],
-      ['ai_kr','Knowledge Representation','ai',0.565,0.42,2,'Encoding facts and reasoning so machines can draw conclusions.'],
-      ['h_hci','Human-Computer Interaction','hci',0.79,0.30,4,'Designing the interfaces where people and computers meet.'],
-      ['h_gfx','Computer Graphics','hci',0.70,0.385,3,'Synthesizing images and entire worlds, pixel by pixel.'],
-      ['h_xr','Virtual & Augmented Reality','hci',0.86,0.43,2,'Immersive and blended realities rendered in real time.'],
-      ['h_viz','Data Visualization','hci',0.675,0.225,2,'Turning abstract data into images the mind can grasp.'],
-      ['sec_net','Network Security','security',0.17,0.50,3,'Defending systems and communications from adversaries.'],
-      ['sec_ia','Information Assurance','security',0.14,0.40,2,'Guaranteeing confidentiality, integrity, and availability of information.'],
-      ['sec_priv','Privacy-Enhancing Tech','security',0.23,0.32,2,'Computing on data while protecting the people behind it.'],
-      ['x_agt','Algorithmic Game Theory','glue',0.50,0.30,2,'Where algorithms meet economics — incentives, auctions, and strategic agents.'],
-      ['x_qis','Quantum Information Science','glue',0.52,0.045,2,'Theory + physics: information carried by superposition and entanglement.'],
-      ['x_neuro','Neuromorphic Computing','glue',0.40,0.90,2,'Architecture + AI + biology: chips that compute like brains.'],
-      ['x_cpriv','Computational Privacy','glue',0.32,0.545,2,'Security + databases: querying data without ever exposing it.'],
-      ['x_fin','Computational Finance','glue',0.85,0.60,2,'Algorithms + economics applied to markets, pricing, and risk.'],
-      ['x_bioinf','Bioinformatics','glue',0.80,0.13,2,'Algorithms + biology: decoding the data of life itself.'],
-      ['x_quantum','Quantum Computing','glue',0.45,0.92,2,'Hardware + theory: harnessing quantum mechanics to compute.'],
-      ['ext_econ','Economics','ext',0.95,0.55,1,'An adjacent discipline just beyond the edge of the map.'],
-      ['ext_bio','Biology','ext',0.90,0.045,1,'An adjacent discipline just beyond the edge of the map.'],
-      ['ext_phys','Physics','ext',0.45,0.975,1,'An adjacent discipline just beyond the edge of the map.'],
-      ['ext_med','Medicine','ext',0.95,0.38,1,'An adjacent discipline just beyond the edge of the map.'],
-      ['ext_art','Art & Design','ext',0.95,0.215,1,'An adjacent discipline just beyond the edge of the map.']
-    ];
-    const E = [
-      ['t_alg','t_complex',3],['t_complex','t_info',2],['t_alg','t_formal',2],['t_formal','sw_pl',2],
-      ['t_crypto','t_complex',2],['t_crypto','sec_net',3],
-      ['t_colt','t_complex',2],['t_colt','t_alg',2],['t_colt','ai_ml',3],
-      ['sw_pl','sw_comp',3],['sw_comp','s_arch',2],['sw_pl','sw_eng',2],['t_alg','sw_eng',3],
-      ['sw_eng','s_db',2],['sw_eng','s_dist',2],
-      ['s_os','s_arch',4],['s_os','s_net',3],['s_net','s_dist',3],['s_dist','s_db',3],['s_dist','s_os',2],
-      ['s_embed','s_arch',3],['s_embed','ai_rob',2],
-      ['t_alg','ai_ml',4],['ai_ml','ai_cv',4],['ai_ml','ai_nlp',4],['ai_ml','ai_data',3],['ai_ml','ai_rob',3],
-      ['ai_ml','ai_kr',2],['ai_data','s_db',3],['ai_kr','ai_nlp',2],['ai_cv','h_gfx',2],['ai_nlp','h_hci',2],
-      ['t_info','ai_ml',2],
-      ['h_hci','h_gfx',3],['h_gfx','h_xr',3],['h_hci','h_viz',3],['h_hci','h_xr',2],['h_viz','ai_data',2],
-      ['h_hci','sw_eng',2],
-      ['sec_net','sec_ia',2],['sec_ia','sec_priv',2],['sec_net','s_net',3],['sec_priv','x_cpriv',2],
-      ['x_cpriv','s_db',2],
-      ['x_agt','t_alg',2],['x_agt','t_complex',2],['x_agt','ext_econ',2],['x_qis','t_complex',2],['x_qis','x_quantum',2],
-      ['x_neuro','s_arch',2],['x_neuro','ai_ml',2],['x_quantum','s_arch',2],['x_quantum','t_complex',2],
-      ['x_fin','ai_ml',2],['x_fin','t_alg',1],['x_fin','ext_econ',2],
-      ['x_bioinf','ai_data',2],['x_bioinf','ext_bio',2],['x_quantum','ext_phys',2],
-      ['ai_ml','ext_med',1],['h_xr','ext_art',1],['ai_cv','ext_med',1]
-    ];
-    this.N = N; this.E = E;
-    this.byId = {};
-    N.forEach(a => { this.byId[a[0]] = {id:a[0],label:a[1],region:a[2],x:a[3],y:a[4],w:a[5],blurb:a[6]}; });
-    this.adj = {};
-    N.forEach(a => this.adj[a[0]] = []);
-    E.forEach(([a,b]) => { if(this.adj[a] && this.adj[b]){ this.adj[a].push(b); this.adj[b].push(a); } });
+<script>
+(function(){
+  "use strict";
 
-    this.BIG = ['t_alg','ai_ml','s_os','sw_eng','h_hci','sec_net'];
-    this.details = {
-      t_alg: { title:'Algorithms & Data Structures',
-        sub:[
-          ['Sorting & Searching','Ordering and locating data — the first algorithms every programmer learns.'],
-          ['Graph Algorithms','Shortest paths, flows, and connectivity across networks of nodes and edges.'],
-          ['Dynamic Programming','Solving large problems by caching the answers to overlapping smaller ones.'],
-          ['Greedy Methods','Building solutions from locally optimal choices — and proving when that is enough.'],
-          ['Randomized Algorithms','Using controlled randomness for simpler, faster, high-probability solutions.'],
-          ['Approximation','Provably near-optimal answers when the exact one is intractable.'],
-          ['Core Data Structures','Trees, heaps, and hash tables — shaping data for raw speed.'],
-          ['Computational Geometry','Algorithms over points, shapes, and space.']
-        ], rel:['ai_ml','sec_net','sw_eng'] },
-      ai_ml: { title:'Machine Learning',
-        sub:[
-          ['Deep Learning','Many-layered neural networks that learn rich representations from raw data.'],
-          ['Reinforcement Learning','Agents that learn by trial, error, and reward inside an environment.'],
-          ['Supervised Learning','Learning to predict labels from examples — classification and regression.'],
-          ['Unsupervised Learning','Discovering clusters, structure, and embeddings without any labels.'],
-          ['Generative Models','LLMs, diffusion, and GANs that synthesize new text, images, and more.'],
-          ['Probabilistic ML','Bayesian models that reason explicitly about uncertainty.'],
-          ['Optimization','The gradient-based engines that actually train the models.'],
-          ['ML Systems & MLOps','Serving, scaling, and operating models in the real world.']
-        ], rel:['t_alg','t_colt','h_hci','sw_eng'] },
-      s_os: { title:'Operating Systems',
-        sub:[
-          ['Process Scheduling','Deciding which task runs on which core, and exactly when.'],
-          ['Memory Management','Virtual memory, paging, and the illusion of endless RAM.'],
-          ['File Systems','Organizing bytes on disk into durable, named storage.'],
-          ['Concurrency','Locks, threads, and doing many things at once — safely.'],
-          ['Virtualization','Containers and VMs that slice one machine into many.'],
-          ['Kernel & Drivers','The privileged core that speaks directly to the hardware.'],
-          ['Isolation & Security','Keeping processes and users from harming one another.']
-        ], rel:['s_arch','s_dist','sec_net'] },
-      sw_eng: { title:'Software Engineering',
-        sub:[
-          ['Architecture & Design','Structuring large systems with patterns that scale.'],
-          ['Testing & QA','Automated checks that keep software correct as it grows.'],
-          ['Version Control & CI/CD','Coordinating change and shipping continuously.'],
-          ['DevOps & Reliability','Running services that stay up under real-world load.'],
-          ['Programming Languages','The notations and type systems we build software with.'],
-          ['Compilers','Translating source into fast, correct machine code.'],
-          ['Maintenance','Keeping aging codebases healthy over many years.']
-        ], rel:['t_alg','ai_ml','h_hci'] },
-      h_hci: { title:'Human-Computer Interaction',
-        sub:[
-          ['Interaction Design','Crafting how people act on and through interfaces.'],
-          ['Usability & Accessibility','Designing so everyone, in every context, can succeed.'],
-          ['Data Visualization','Turning abstract data into images the mind can grasp.'],
-          ['AR / VR','Immersive and blended realities rendered in real time.'],
-          ['Computer Graphics','Synthesizing images and whole worlds, pixel by pixel.'],
-          ['Ubiquitous Computing','Interfaces woven into devices, rooms, and bodies.'],
-          ['Affective & Social','Systems attuned to emotion and human relationships.']
-        ], rel:['ai_ml','sw_eng','h_gfx'] },
-      sec_net: { title:'Security & Cryptography', region:'security',
-        sub:[
-          ['Cryptography','Turning hard math into secrets, signatures, and trust.'],
-          ['Network & Web Security','Defending traffic and services from attackers.'],
-          ['Systems Security','Hardening operating systems, hardware, and software.'],
-          ['Privacy Technologies','Computing on data while protecting the people in it.'],
-          ['Protocols','Secure handshakes that let strangers trust each other.'],
-          ['Threat & Malware','Understanding, detecting, and countering attacks.'],
-          ['Formal Security','Proving security properties with mathematics.']
-        ], rel:['t_alg','s_os','sec_priv'] }
+  var VBW = 1200, VBH = 840;
+  var MX = 130, MY_TOP = 110, MY_BOTTOM = 230; // extra bottom margin keeps the plotted
+  // range structurally clear of the bottom-left legend overlay, rather than
+  // fighting it label-by-label after the fact.
+  var PW = VBW - 2*MX, PH = VBH - MY_TOP - MY_BOTTOM;
+
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs){
+    var e = document.createElementNS(SVGNS, tag);
+    if (attrs) for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+  function X(rating){ return MX + (rating/10)*PW; }
+  function Y(rating){ return (VBH - MY_BOTTOM) - (rating/10)*PH; } // 10=human -> top, 0=machine -> bottom
+
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
-
-    this.RES = {
-      t_alg:{v:'STOC · FOCS · SODA',b:'Cormen, Leiserson, Rivest & Stein — Introduction to Algorithms (CLRS)'},
-      t_complex:{v:'FOCS · STOC · CCC',b:'Sipser — Introduction to the Theory of Computation'},
-      t_info:{v:'ISIT · IEEE Trans. Information Theory',b:'Cover & Thomas — Elements of Information Theory'},
-      t_formal:{v:'CAV · POPL · LICS',b:'Baier & Katoen — Principles of Model Checking'},
-      t_crypto:{v:'CRYPTO · EUROCRYPT · TCC',b:'Katz & Lindell — Introduction to Modern Cryptography'},
-      t_colt:{v:'COLT · NeurIPS · ALT',b:'Shalev-Shwartz & Ben-David — Understanding Machine Learning'},
-      s_arch:{v:'ISCA · MICRO · ASPLOS',b:'Hennessy & Patterson — Computer Architecture: A Quantitative Approach'},
-      s_os:{v:'SOSP · OSDI · EuroSys',b:'Arpaci-Dusseau — Operating Systems: Three Easy Pieces'},
-      s_dist:{v:'OSDI · SOSP · NSDI',b:'Kleppmann — Designing Data-Intensive Applications'},
-      s_net:{v:'SIGCOMM · NSDI · CoNEXT',b:'Kurose & Ross — Computer Networking: A Top-Down Approach'},
-      s_db:{v:'SIGMOD · VLDB · ICDE',b:'Silberschatz, Korth & Sudarshan — Database System Concepts'},
-      s_embed:{v:'RTSS · EMSOFT · RTAS',b:'Lee & Seshia — Introduction to Embedded Systems'},
-      sw_pl:{v:'POPL · PLDI · ICFP',b:'Pierce — Types and Programming Languages'},
-      sw_comp:{v:'PLDI · CGO · CC',b:'Aho, Lam, Sethi & Ullman — Compilers (the Dragon Book)'},
-      sw_eng:{v:'ICSE · FSE · ASE',b:'Hunt & Thomas — The Pragmatic Programmer'},
-      ai_ml:{v:'NeurIPS · ICML · ICLR',b:'Bishop — Pattern Recognition and Machine Learning'},
-      ai_nlp:{v:'ACL · EMNLP · NAACL',b:'Jurafsky & Martin — Speech and Language Processing'},
-      ai_cv:{v:'CVPR · ICCV · ECCV',b:'Szeliski — Computer Vision: Algorithms and Applications'},
-      ai_rob:{v:'ICRA · IROS · RSS',b:'Thrun, Burgard & Fox — Probabilistic Robotics'},
-      ai_data:{v:'KDD · ICDM · WSDM',b:'Han, Kamber & Pei — Data Mining: Concepts and Techniques'},
-      ai_kr:{v:'KR · AAAI · IJCAI',b:'Brachman & Levesque — Knowledge Representation and Reasoning'},
-      h_hci:{v:'CHI · UIST · CSCW',b:'Norman — The Design of Everyday Things'},
-      h_gfx:{v:'SIGGRAPH · EGSR · I3D',b:'Pharr, Jakob & Humphreys — Physically Based Rendering'},
-      h_xr:{v:'IEEE VR · ISMAR · UIST',b:'LaValle — Virtual Reality'},
-      h_viz:{v:'IEEE VIS · EuroVis',b:'Munzner — Visualization Analysis and Design'},
-      sec_net:{v:'IEEE S&P · USENIX Security · CCS',b:'Anderson — Security Engineering'},
-      sec_ia:{v:'CCS · USENIX Security · NDSS',b:'Anderson — Security Engineering'},
-      sec_priv:{v:'PoPETs · CCS · IEEE S&P',b:'Dwork & Roth — The Algorithmic Foundations of Differential Privacy'},
-      x_agt:{v:'EC · WINE · STOC',b:'Nisan, Roughgarden, Tardos & Vazirani — Algorithmic Game Theory'},
-      x_qis:{v:'QIP · ITCS',b:'Nielsen & Chuang — Quantum Computation and Quantum Information'},
-      x_neuro:{v:'ISCA · IJCNN · Nature Electronics',b:'Mead — Analog VLSI and Neural Systems'},
-      x_cpriv:{v:'PoPETs · CCS',b:'Dwork & Roth — The Algorithmic Foundations of Differential Privacy'},
-      x_fin:{v:'ACM ICAIF · Quantitative Finance',b:'Hull — Options, Futures, and Other Derivatives'},
-      x_bioinf:{v:'ISMB · RECOMB · WABI',b:'Durbin, Eddy, Krogh & Mitchison — Biological Sequence Analysis'},
-      x_quantum:{v:'QIP · FOCS · STOC',b:'Nielsen & Chuang — Quantum Computation and Quantum Information'}
-    };
-
-    this.starsRaw = [];
-    let seed = 7;
-    const rnd = () => { seed = (seed*9301+49297)%233280; return seed/233280; };
-    for(let i=0;i<82;i++){
-      this.starsRaw.push({ x:rnd()*1600, y:rnd()*1000, s:0.6+rnd()*2, du:(3+rnd()*5), d:(rnd()*6) });
-    }
-    this._built = true;
   }
 
-  componentDidMount(){
-    this._onR = () => this.forceUpdate();
-    window.addEventListener('resize', this._onR);
-    this._onK = (e) => { if(e.key==='Escape' && this.state.view==='detail') this.back(); };
-    window.addEventListener('keydown', this._onK);
-    window.addEventListener('mousemove', this.onMove);
-    window.addEventListener('mouseup', this.onUp);
-  }
-  componentWillUnmount(){ window.removeEventListener('resize', this._onR); window.removeEventListener('keydown', this._onK); window.removeEventListener('mousemove', this.onMove); window.removeEventListener('mouseup', this.onUp); }
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  enter(id){ this.setState({ view:'detail', detailId:id, dHover:null, dSel:null, hovered:null, selected:null, panX:0, panY:0 }); }
-  back(){ this.setState({ view:'galaxy', detailId:null, dHover:null, dSel:null, panX:0, panY:0 }); }
+  fetch("data.json").then(function(r){ return r.json(); }).then(function(data){
+    init(data);
+  }).catch(function(err){
+    var msg = el("text", {x: VBW/2, y: VBH/2, "text-anchor":"middle", fill:"#9aa4b8", "font-size":"14"});
+    msg.textContent = "Could not load data.json — serve this page over http:// (not file://).";
+    document.getElementById("map").appendChild(msg);
+    console.error(err);
+  });
 
-  curve(x1,y1,x2,y2){
-    const mx=(x1+x2)/2, my=(y1+y2)/2, dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy)||1;
-    const off=Math.min(len*0.09,70), cx=mx-dy/len*off, cy=my+dx/len*off;
-    return `M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
-  }
+  function init(data){
+    var areas = data.areas, connections = data.connections;
+    var byId = {};
+    areas.forEach(function(a){ byId[a.id] = a; });
 
-  renderVals(){
-    if(!this._built) this.build();
-    const S = this.state, W=1600, H=1000;
-    const motion = this.props.ambientMotion !== false;
-    const labelAll = (this.props.labelMode || 'major') === 'all';
-    const vw = (typeof window!=='undefined') ? window.innerWidth : 1280;
-    const vh = (typeof window!=='undefined') ? window.innerHeight : 800;
-    const scale = Math.min(vw/W, vh/H, 1.08);
-    const stageStyle = `position:relative;width:${W}px;height:${H}px;flex:none;transform:translate(${S.panX||0}px,${S.panY||0}px) scale(${scale.toFixed(4)});transform-origin:center center`;
-    const px = x => x*W, py = y => y*H;
-    const isDetail = S.view==='detail', isGalaxy = !isDetail;
+    var categoryOfArea = {};      // areaId -> categoryId
+    var childrenOfCategory = {};  // categoryId -> [areaId]
+    var membershipLinks = [];
+    var crossLinks = [];
 
-    const stars = this.starsRaw.map(s => ({
-      style: `position:absolute;left:${s.x.toFixed(0)}px;top:${s.y.toFixed(0)}px;width:${s.s.toFixed(1)}px;height:${s.s.toFixed(1)}px;border-radius:50%;background:#dfe7ff;opacity:.4;z-index:0`
-        + (motion ? `;animation:twinkle ${s.du.toFixed(2)}s ease-in-out ${s.d.toFixed(2)}s infinite` : ``)
-    }));
-
-    let out = { stageStyle, stars, isDetail, isGalaxy,
-      gLeave: () => this.setState({ hovered:null }),
-      dLeave: () => this.setState({ dHover:null }),
-      onBack: () => this.back(),
-      onBg: () => { if(this._moved) return; if(this.state.view==='detail') this.setState({ dSel:null }); else this.setState({ selected:null }); },
-      onDown: (e) => { if(e.button!==0) return; this._md=true; this._moved=false; this._dx=e.clientX; this._dy=e.clientY; this._sx=e.clientX-(this.state.panX||0); this._sy=e.clientY-(this.state.panY||0); },
-      onRecenter: () => this.setState({ panX:0, panY:0 }),
-      panned: (S.panX||0)!==0 || (S.panY||0)!==0,
-      galaxyNodes:[], galaxyEdges:[], bigRings:[], detailNodes:[], detailEdges:[],
-      reticleStyle:'display:none', reticleStyle2:'display:none',
-      detailTitle:'', detailIntro:'', detailKicker:{text:'',color:'#fff'},
-      panelHasFocus:false, panelEmpty:true, panelTitle:'', panelKicker:'', panelBlurb:'',
-      panelColor:'#fff', connections:[], panelEnter:false, panelEnterBorder:'', panelEnterBg:'',
-      panelHasConn:false, panelConnLabel:'', panelHasRes:false, panelVenues:'', panelBook:'' };
-
-    if(isGalaxy){
-      const focus = S.hovered || S.selected;
-      const hi = focus ? new Set([focus, ...(this.adj[focus]||[])]) : null;
-      const fhue = focus ? this.hueOf(this.byId[focus].region) : 200;
-
-      out.galaxyEdges = this.E.map(([a,b,w]) => {
-        const A=this.byId[a], B=this.byId[b];
-        const d=this.curve(px(A.x),py(A.y),px(B.x),py(B.y));
-        const focused = focus && (a===focus || b===focus);
-        const stroke = focused ? `oklch(0.82 0.15 ${fhue})` : `oklch(0.78 0.04 250)`;
-        const op = focused ? 0.78 : (hi ? 0.04 : (0.045 + w*0.022));
-        const sw = (0.6 + w*0.55) * (focused ? 2.2 : 1);
-        return { d, stroke, sw: sw.toFixed(2), op: op.toFixed(3) };
-      });
-
-      const rings = [];
-      out.galaxyNodes = this.N.map(a => {
-        const n = this.byId[a[0]];
-        const X=px(n.x), Y=py(n.y);
-        const isExt = n.region==='ext';
-        const isBig = this.BIG.includes(n.id);
-        const hue = this.hueOf(n.region);
-        const cMain = n.region==='glue' ? `oklch(0.9 0.1 92)` : `oklch(0.82 0.16 ${hue})`;
-        const cDark = `oklch(0.46 0.13 ${hue})`;
-        const dim = hi && !hi.has(n.id);
-        const isFocus = focus===n.id;
-        const inHi = hi && hi.has(n.id);
-        const r = (isExt ? 5 : (5 + n.w*3.2)) + (isBig?3:0);
-        let glow = 6 + n.w*5; if(inHi) glow *= 1.7;
-        const galpha = isExt ? 0.35 : (inHi ? 0.85 : 0.55);
-        const sc = isFocus ? 1.2 : (inHi ? 1.06 : 1);
-        const z = isFocus ? 6 : (inHi ? 5 : (dim ? 2 : 3));
-        let coreStyle;
-        if(isExt){
-          coreStyle = `position:absolute;left:${(X-r).toFixed(1)}px;top:${(Y-r).toFixed(1)}px;width:${2*r}px;height:${2*r}px;border-radius:50%;background:oklch(0.72 0.04 250);box-shadow:0 0 ${glow.toFixed(0)}px oklch(0.72 0.05 250 / ${galpha});opacity:${dim?0.12:0.6};transform:scale(${sc});transition:all .35s;cursor:pointer;z-index:${z}`;
-        } else {
-          const ring = isBig ? `, 0 0 0 2px rgba(255,255,255,${dim?0.18:0.55}), 0 0 0 ${(r*0.62).toFixed(0)}px oklch(0.82 0.16 ${hue} / ${dim?0.05:0.14})` : ``;
-          coreStyle = `position:absolute;left:${(X-r).toFixed(1)}px;top:${(Y-r).toFixed(1)}px;width:${(2*r).toFixed(1)}px;height:${(2*r).toFixed(1)}px;border-radius:50%;background:radial-gradient(circle at 36% 30%, #ffffff 0%, ${cMain} 44%, ${cDark} 100%);box-shadow:0 0 ${glow.toFixed(0)}px oklch(0.8 0.18 ${hue} / ${galpha})${ring};opacity:${dim?0.16:1};transform:scale(${sc});transition:opacity .35s, transform .35s, box-shadow .35s;cursor:pointer;z-index:${z}`
-            + (motion && n.w>=4 ? `;animation:pulse ${(3.5+n.w*0.3).toFixed(1)}s ease-in-out infinite` : ``);
-        }
-        if(isBig && !dim){
-          const hr = 2*r + 16;
-          [0,1.5].forEach(dl => rings.push({ style:`position:absolute;left:${X.toFixed(1)}px;top:${Y.toFixed(1)}px;width:${hr.toFixed(0)}px;height:${hr.toFixed(0)}px;margin-left:${(-hr/2).toFixed(0)}px;margin-top:${(-hr/2).toFixed(0)}px;border-radius:50%;border:1.5px solid oklch(0.84 0.16 ${hue} / .55);pointer-events:none;z-index:2`+(motion?`;animation:halo 3s ease-out ${dl}s infinite`:`;opacity:.18`) }));
-        }
-        let la;
-        if(hi){ la = hi.has(n.id) ? (isFocus ? 1 : 0.92) : 0; }
-        else { la = isExt ? 0.42 : (isBig ? 0.95 : (n.w>=3 ? 0.85 : (labelAll ? 0.55 : 0))); }
-        const lsize = isExt ? 12 : (isBig ? 17 : (n.w>=4 ? 16 : (n.w>=3 ? 15 : 13)));
-        const lweight = isBig ? 700 : 600;
-        const lcolor = isExt ? `oklch(0.78 0.04 250 / ${la})` : `rgba(236,240,250,${la})`;
-        const labelStyle = `position:absolute;left:${X.toFixed(1)}px;top:${(Y+r+7).toFixed(1)}px;transform:translateX(-50%);font:${isExt?'italic 500':lweight} ${lsize}px 'Space Grotesk';color:${lcolor};white-space:nowrap;pointer-events:none;text-shadow:0 1px 7px rgba(0,0,0,.85);letter-spacing:.2px;transition:color .35s;z-index:7`;
-        return {
-          id:n.id, coreStyle, labelStyle, label:n.label,
-          onClick:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); if(this._moved) return; if(this.BIG.includes(n.id)) this.enter(n.id); else this.setState(st=>({selected: st.selected===n.id?null:n.id})); },
-          onEnter:()=> this.setState({ hovered:n.id })
-        };
-      });
-      out.bigRings = rings;
-
-      if(focus){
-        const f=this.byId[focus], hue=this.hueOf(f.region);
-        out.panelHasFocus=true; out.panelEmpty=false;
-        out.panelTitle=f.label; out.panelBlurb=f.blurb;
-        out.panelColor=`oklch(0.82 0.14 ${hue})`; out.panelKicker=this.regionName(f.region);
-        out.panelEnter=this.BIG.includes(focus);
-        out.panelEnterBorder=`oklch(0.82 0.15 ${hue} / .5)`; out.panelEnterBg=`oklch(0.82 0.15 ${hue} / .12)`;
-        out.panelHasConn=true; out.panelConnLabel='CONNECTS TO';
-        out.connections=(this.adj[focus]||[]).map(id=>{ const m=this.byId[id], h=this.hueOf(m.region);
-          return { label:m.label, style:`font:500 12px 'Space Grotesk';padding:4px 9px;border-radius:20px;border:1px solid oklch(0.82 0.15 ${h} / .5);color:oklch(0.85 0.13 ${h});background:oklch(0.82 0.15 ${h} / .12)` }; });
-        const rr=this.RES[focus]; if(rr){ out.panelHasRes=true; out.panelVenues=rr.v; out.panelBook=rr.b; }
+    connections.forEach(function(c){
+      var s = byId[c.source], t = byId[c.target];
+      if (s.is_big_category && !t.is_big_category){
+        membershipLinks.push(c);
+        categoryOfArea[t.id] = s.id;
+        (childrenOfCategory[s.id] = childrenOfCategory[s.id] || []).push(t.id);
+      } else if (t.is_big_category && !s.is_big_category){
+        membershipLinks.push({source:t.id, target:s.id});
+        categoryOfArea[s.id] = t.id;
+        (childrenOfCategory[t.id] = childrenOfCategory[t.id] || []).push(s.id);
+      } else {
+        crossLinks.push(c);
       }
-      return out;
+    });
+
+    var pos = {};
+    areas.forEach(function(a){
+      pos[a.id] = { x: X(a.rating_abstract_to_concrete), y: Y(a.rating_machine_to_human) };
+    });
+
+    var neighbors = {}; // id -> Set of connected ids
+    function link(a,b){
+      (neighbors[a] = neighbors[a] || {})[b] = true;
+      (neighbors[b] = neighbors[b] || {})[a] = true;
     }
+    membershipLinks.forEach(function(c){ link(c.source, c.target); });
+    crossLinks.forEach(function(c){ link(c.source, c.target); });
 
-    // ---------- DETAIL VIEW ----------
-    const core = this.byId[S.detailId];
-    const D = this.details[S.detailId];
-    const region = D.region || core.region;
-    const hue = this.hueOf(region);
-    const cx=800, cy=496;
-    const focusD = S.dSel || S.dHover;
-    const nodes=[], edges=[];
+    var defs = document.getElementById("defs");
+    var starfieldG = document.getElementById("starfield");
+    var nebulaeG = document.getElementById("nebulae");
+    var axisG = document.getElementById("axis-captions");
+    var linksG = document.getElementById("links");
+    var nodesG = document.getElementById("nodes");
+    var legendEl = document.getElementById("legend");
+    var tableBody = document.getElementById("tableBody");
 
-    // sub layout
-    const subN = D.sub.length, srx=372, sry=240;
-    const subPos = D.sub.map((s,i)=>{ const ang=-Math.PI/2 + i/subN*2*Math.PI; return { x:cx+Math.cos(ang)*srx, y:cy+Math.sin(ang)*sry }; });
-    // rel layout (right hemisphere)
-    const relN = D.rel.length, orx=606, ory=300;
-    const relPos = D.rel.map((rid,i)=>{ const t = relN>1 ? (i/(relN-1)) : 0.5; const deg=-72 + 144*t; const ang=deg*Math.PI/180; return { x:cx+Math.cos(ang)*orx, y:cy+Math.sin(ang)*ory }; });
+    buildStarfield(starfieldG);
+    buildNebulae(defs, nebulaeG, areas, childrenOfCategory, pos);
+    buildAxisCaptions(axisG);
+    buildLinks(linksG, membershipLinks, crossLinks, byId, pos);
+    var labelPlan = planLabels(areas, pos);
+    buildNodes(nodesG, areas, pos, labelPlan);
+    buildLegend(legendEl, areas);
+    buildTable(tableBody, areas, byId, categoryOfArea);
 
-    // edges core->sub
-    subPos.forEach((p,i)=>{ const fc=focusD===`sub:${i}`; edges.push({ d:this.curve(cx,cy,p.x,p.y), stroke:`oklch(0.82 0.15 ${hue})`, sw:(fc?2.4:1.2).toFixed(2), op:(fc?0.82:0.26).toFixed(2), dash:'' }); });
-    // edges core->rel
-    relPos.forEach((p,i)=>{ const rid=D.rel[i]; const rh=this.hueOf(this.byId[rid].region); const fc=focusD===`rel:${rid}`; edges.push({ d:this.curve(cx,cy,p.x,p.y), stroke:`oklch(0.8 0.12 ${rh})`, sw:(fc?2:1).toFixed(2), op:(fc?0.7:0.16).toFixed(2), dash:'2 9' }); });
-    out.detailEdges = edges;
-
-    // core node
-    const cr=30, cMain=`oklch(0.84 0.15 ${hue})`, cDark=`oklch(0.48 0.13 ${hue})`;
-    nodes.push({
-      coreStyle:`position:absolute;left:${cx-cr}px;top:${cy-cr}px;width:${2*cr}px;height:${2*cr}px;border-radius:50%;background:radial-gradient(circle at 36% 30%, #ffffff 0%, ${cMain} 46%, ${cDark} 100%);box-shadow:0 0 46px oklch(0.8 0.18 ${hue} / .85), 0 0 0 2px rgba(255,255,255,.5), 0 0 0 10px oklch(0.82 0.16 ${hue} / .12);z-index:6;cursor:pointer;transition:all .3s`+(motion?`;animation:pulse 4.5s ease-in-out infinite`:``),
-      labelStyle:`position:absolute;left:${cx}px;top:${cy+cr+10}px;transform:translateX(-50%);font:700 18px 'Space Grotesk';color:#f3f6ff;white-space:nowrap;pointer-events:none;text-shadow:0 1px 8px rgba(0,0,0,.9);letter-spacing:-.2px;z-index:7`,
-      label:D.title,
-      onClick:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); if(this._moved) return; this.setState({ dSel:null, dHover:null }); },
-      onEnter:()=> this.setState({ dHover:null })
-    });
-
-    // sub nodes
-    D.sub.forEach((s,i)=>{ const p=subPos[i]; const fc=focusD===`sub:${i}`; const dimd=focusD && !fc;
-      const r=fc?16:13; const glow=fc?28:14;
-      nodes.push({
-        coreStyle:`position:absolute;left:${(p.x-r).toFixed(1)}px;top:${(p.y-r).toFixed(1)}px;width:${2*r}px;height:${2*r}px;border-radius:50%;background:radial-gradient(circle at 36% 30%, #ffffff 0%, oklch(0.84 0.14 ${hue}) 46%, oklch(0.5 0.12 ${hue}) 100%);box-shadow:0 0 ${glow}px oklch(0.8 0.17 ${hue} / ${fc?0.9:0.6});opacity:${dimd?0.4:1};transform:scale(${fc?1.1:1});transition:all .3s;cursor:pointer;z-index:${fc?6:4}`,
-        labelStyle:`position:absolute;left:${p.x.toFixed(1)}px;top:${(p.y+r+6).toFixed(1)}px;transform:translateX(-50%);font:600 13px 'Space Grotesk';color:rgba(236,240,250,${dimd?0.32:0.9});white-space:nowrap;pointer-events:none;text-shadow:0 1px 7px rgba(0,0,0,.85);transition:all .3s;z-index:7`,
-        label:s[0],
-        onClick:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); if(this._moved) return; this.setState(st=>({ dSel: st.dSel===`sub:${i}`?null:`sub:${i}` })); },
-        onEnter:()=> this.setState({ dHover:`sub:${i}` })
-      });
-    });
-
-    // rel nodes
-    D.rel.forEach((rid,i)=>{ const p=relPos[i]; const m=this.byId[rid]; const rh=this.hueOf(m.region); const key=`rel:${rid}`; const fc=focusD===key; const dimd=focusD && !fc; const big=this.BIG.includes(rid);
-      const r=fc?12:9;
-      nodes.push({
-        coreStyle:`position:absolute;left:${(p.x-r).toFixed(1)}px;top:${(p.y-r).toFixed(1)}px;width:${2*r}px;height:${2*r}px;border-radius:50%;background:radial-gradient(circle at 36% 30%, #ffffff 0%, oklch(0.82 0.14 ${rh}) 48%, oklch(0.48 0.12 ${rh}) 100%);box-shadow:0 0 ${fc?20:11}px oklch(0.8 0.16 ${rh} / ${fc?0.85:0.5})${big?`, 0 0 0 1.5px rgba(255,255,255,${dimd?0.2:0.5}), 0 0 0 5px oklch(0.82 0.16 ${rh} / ${dimd?0.05:0.14})`:''};opacity:${dimd?0.4:0.95};transform:scale(${fc?1.12:1});transition:all .3s;cursor:pointer;z-index:${fc?6:4}`,
-        labelStyle:`position:absolute;left:${p.x.toFixed(1)}px;top:${(p.y+r+6).toFixed(1)}px;transform:translateX(-50%);font:500 12px 'Space Grotesk';color:rgba(214,224,244,${dimd?0.3:0.78});white-space:nowrap;pointer-events:none;text-shadow:0 1px 7px rgba(0,0,0,.85);transition:all .3s;z-index:7`,
-        label:m.label,
-        onClick:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); if(this._moved) return; if(this.BIG.includes(rid)) this.enter(rid); else this.setState(st=>({ dSel: st.dSel===key?null:key })); },
-        onEnter:()=> this.setState({ dHover:key })
-      });
-    });
-    out.detailNodes = nodes;
-
-    out.reticleStyle = `position:absolute;left:${cx}px;top:${cy}px;width:544px;height:544px;margin-left:-272px;margin-top:-272px;border-radius:50%;border:1px dashed oklch(0.84 0.14 ${hue} / .16);pointer-events:none;z-index:2`+(motion?`;animation:ringrot 64s linear infinite`:``);
-    out.reticleStyle2 = `position:absolute;left:${cx}px;top:${cy}px;width:300px;height:300px;margin-left:-150px;margin-top:-150px;border-radius:50%;border:1px solid oklch(0.84 0.14 ${hue} / .10);pointer-events:none;z-index:2`;
-
-    out.detailTitle = D.title;
-    out.detailIntro = core.blurb;
-    out.detailKicker = { text:`${this.regionName(region)} \u00b7 ${subN} SUB-FIELDS`, color:`oklch(0.82 0.14 ${hue})` };
-
-    // detail panel
-    out.panelHasFocus=true; out.panelEmpty=false;
-    if(!focusD){
-      out.panelTitle=D.title; out.panelBlurb=core.blurb;
-      { const rr=this.RES[S.detailId]; if(rr){ out.panelHasRes=true; out.panelVenues=rr.v; out.panelBook=rr.b; } }
-      out.panelColor=`oklch(0.82 0.14 ${hue})`; out.panelKicker=`${this.regionName(region)} \u00b7 galaxy`;
-      out.panelHasConn=true; out.panelConnLabel='SUB-AREAS INSIDE';
-      out.connections=D.sub.map(s=>({ label:s[0], style:`font:500 12px 'Space Grotesk';padding:4px 9px;border-radius:20px;border:1px solid oklch(0.82 0.15 ${hue} / .45);color:oklch(0.86 0.12 ${hue});background:oklch(0.82 0.15 ${hue} / .1)` }));
-    } else if(focusD.indexOf('sub:')===0){
-      const s=D.sub[+focusD.slice(4)];
-      out.panelTitle=s[0]; out.panelBlurb=s[1]; out.panelColor=`oklch(0.82 0.14 ${hue})`;
-      out.panelKicker=`sub-area \u00b7 ${D.title}`; out.panelHasConn=false;
-    } else {
-      const rid=focusD.slice(4); const m=this.byId[rid]; const rh=this.hueOf(m.region); const big=this.BIG.includes(rid);
-      out.panelTitle=m.label; out.panelBlurb=m.blurb; out.panelColor=`oklch(0.82 0.14 ${rh})`;
-      out.panelKicker='neighboring field'; out.panelHasConn=false;
-      out.panelEnter=big; out.panelEnterBorder=`oklch(0.82 0.15 ${rh} / .5)`; out.panelEnterBg=`oklch(0.82 0.15 ${rh} / .12)`;
-      if(big) out.panelColor=`oklch(0.82 0.14 ${rh})`;
-      { const rr=this.RES[rid]; if(rr){ out.panelHasRes=true; out.panelVenues=rr.v; out.panelBook=rr.b; } }
-    }
-    return out;
+    wireInteraction(areas, byId, neighbors, categoryOfArea);
+    wireListToggle();
   }
-}
+
+  // ---------------- starfield ----------------
+  function buildStarfield(g){
+    var rand = mulberry32(1337);
+    var n = 220, twinkleEvery = 13;
+    for (var i=0;i<n;i++){
+      var x = rand()*VBW, y = rand()*VBH;
+      var r = 0.5 + rand()*1.3;
+      var op = 0.12 + rand()*0.5;
+      var s = el("circle", {cx:x.toFixed(1), cy:y.toFixed(1), r:r.toFixed(2), fill:"#ffffff", opacity:op.toFixed(2)});
+      if (i % twinkleEvery === 0){
+        var lo = Math.max(0.05, op-0.28), hi = Math.min(1, op+0.35);
+        s.classList.add("twinkle");
+        s.style.setProperty("--op-lo", lo.toFixed(2));
+        s.style.setProperty("--op-hi", hi.toFixed(2));
+        s.style.setProperty("--dur", (3 + rand()*3.5).toFixed(2)+"s");
+        s.style.setProperty("--delay", (rand()*4).toFixed(2)+"s");
+      }
+      g.appendChild(s);
+    }
+  }
+
+  // ---------------- nebulae ----------------
+  function buildNebulae(defs, g, areas, childrenOfCategory, pos){
+    areas.filter(function(a){ return a.is_big_category; }).forEach(function(cat){
+      var kids = childrenOfCategory[cat.id] || [];
+      var cx = pos[cat.id].x, cy = pos[cat.id].y;
+      var maxD = 0;
+      kids.forEach(function(kid){
+        var d = Math.hypot(pos[kid].x-cx, pos[kid].y-cy);
+        if (d > maxD) maxD = d;
+      });
+      var radius = Math.min(280, Math.max(150, maxD + 70));
+
+      var gradId = "neb-" + cat.id;
+      var grad = el("radialGradient", {id:gradId, cx:"50%", cy:"50%", r:"50%"});
+      grad.appendChild(el("stop", {offset:"0%", "stop-color":cat.color_hex, "stop-opacity":"0.14"}));
+      grad.appendChild(el("stop", {offset:"55%", "stop-color":cat.color_hex, "stop-opacity":"0.05"}));
+      grad.appendChild(el("stop", {offset:"100%", "stop-color":cat.color_hex, "stop-opacity":"0"}));
+      defs.appendChild(grad);
+
+      g.appendChild(el("circle", {
+        class:"nebula", cx:cx.toFixed(1), cy:cy.toFixed(1), r:radius.toFixed(1),
+        fill:"url(#"+gradId+")"
+      }));
+    });
+  }
+
+  // ---------------- axis captions ----------------
+  function buildAxisCaptions(g){
+    function cap(x,y,anchor,text){
+      var t = el("text", {x:x, y:y, "text-anchor":anchor, class:"axis-caption"});
+      t.textContent = text;
+      g.appendChild(t);
+    }
+    cap(MX-70, VBH-MY_BOTTOM+6, "start", "← abstract");
+    cap(VBW-MX+70, VBH-MY_BOTTOM+6, "end", "concrete →");
+    cap(MX-24, VBH-MY_BOTTOM+34, "start", "machine");
+    cap(MX-24, MY_TOP-24, "start", "human ↑");
+  }
+
+  // ---------------- links ----------------
+  function buildLinks(g, membershipLinks, crossLinks, byId, pos){
+    membershipLinks.forEach(function(c){
+      var cat = byId[c.source];
+      var a = pos[c.source], b = pos[c.target];
+      g.appendChild(el("line", {
+        class:"link", "data-a":c.source, "data-b":c.target,
+        x1:a.x.toFixed(1), y1:a.y.toFixed(1), x2:b.x.toFixed(1), y2:b.y.toFixed(1),
+        stroke:cat.color_hex, "stroke-width":"1.4", "stroke-linecap":"round", opacity:"0.2"
+      }));
+    });
+    crossLinks.forEach(function(c){
+      var a = pos[c.source], b = pos[c.target];
+      g.appendChild(el("line", {
+        class:"link", "data-a":c.source, "data-b":c.target,
+        x1:a.x.toFixed(1), y1:a.y.toFixed(1), x2:b.x.toFixed(1), y2:b.y.toFixed(1),
+        stroke:"var(--line-neutral)", "stroke-width":"1.75", "stroke-linecap":"round", opacity:"0.38"
+      }));
+    });
+  }
+
+  // ---------------- label collision planning ----------------
+  function planLabels(areas, pos){
+    var placed = [];
+    var plan = {};
+    function bbox(cx, cy, w, h, anchor){
+      var x0 = anchor === "start" ? cx : anchor === "end" ? cx - w : cx - w/2;
+      return {x0:x0, x1:x0+w, y0:cy-h*0.75, y1:cy+h*0.35};
+    }
+    function overlaps(b){
+      return placed.some(function(p){
+        return b.x0 < p.x1 && b.x1 > p.x0 && b.y0 < p.y1 && b.y1 > p.y0;
+      });
+    }
+    areas.forEach(function(a){
+      var p = pos[a.id];
+      var isCat = a.is_big_category;
+      var fs = isCat ? 8 : 6.1;
+      var w = a.name.length * fs + 6;
+      var h = isCat ? 15 : 13;
+      var nearBottom = p.y > VBH - MY_BOTTOM - 40;
+      var nearRight = p.x > VBW - MX - 90;
+      var vFirst = nearBottom ? "above" : "below";
+      var vSecond = vFirst === "above" ? "below" : "above";
+      var hFirst = nearRight ? "left" : "right";
+      var hSecond = hFirst === "left" ? "right" : "left";
+      var order = [vFirst, hFirst, vSecond, hSecond];
+      var vOff = isCat ? 30 : 19, hOff = isCat ? 26 : 15;
+      function candidatesAt(mult){
+        return {
+          below: {dx:0, dy:vOff*mult, anchor:"middle"},
+          above: {dx:0, dy:-vOff*mult+4, anchor:"middle"},
+          right: {dx:hOff*mult, dy:4, anchor:"start"},
+          left:  {dx:-hOff*mult, dy:4, anchor:"end"}
+        };
+      }
+      var chosen = null;
+      // widening rings: try the natural offsets first, then push further out
+      // for crowded clusters before finally accepting an overlap.
+      [1, 1.8, 2.6, 3.6, 4.8].forEach(function(mult){
+        if (chosen) return;
+        var candidates = candidatesAt(mult);
+        for (var i=0;i<order.length;i++){
+          var cand = candidates[order[i]];
+          var cx = p.x + cand.dx, cy = p.y + cand.dy;
+          var b = bbox(cx, cy, w, h, cand.anchor);
+          if (!overlaps(b)){ chosen = {cand:cand, box:b}; break; }
+        }
+      });
+      if (!chosen){ var cand = candidatesAt(1)[vFirst]; chosen = {cand:cand, box:bbox(p.x+cand.dx, p.y+cand.dy, w, h, cand.anchor)}; }
+      placed.push(chosen.box);
+      plan[a.id] = chosen.cand;
+    });
+    return plan;
+  }
+
+  // ---------------- nodes (dots & category flares) ----------------
+  function buildNodes(g, areas, pos, labelPlan){
+    var i = 0;
+    areas.forEach(function(a){
+      var p = pos[a.id];
+      var node = el("g", {
+        class: "node" + (a.is_big_category ? " category" : " area"),
+        id: "node-" + a.id,
+        transform: "translate(" + p.x.toFixed(1) + "," + p.y.toFixed(1) + ")"
+      });
+      node.dataset.id = a.id;
+
+      var inner = el("g", {
+        class:"node-inner",
+        style:"animation-delay:" + Math.min(i*9, 500) + "ms"
+      });
+
+      if (a.is_big_category){
+        inner.appendChild(el("circle", {class:"halo", r:"32", fill:a.color_hex, opacity:"0.5", filter:"url(#blurCat)"}));
+        inner.appendChild(el("polygon", {class:"flare", points:"0,-22 3.2,0 0,22 -3.2,0", fill:a.color_hex, opacity:"0.85"}));
+        inner.appendChild(el("polygon", {class:"flare", points:"-22,0 0,3.2 22,0 0,-3.2", fill:a.color_hex, opacity:"0.85"}));
+        inner.appendChild(el("circle", {class:"core", r:"11.5", fill:a.color_hex}));
+        inner.appendChild(el("circle", {r:"11.5", fill:"none", stroke:"var(--ring)", "stroke-width":"2"}));
+        inner.appendChild(el("circle", {class:"glint", r:"4", fill:"#fff", opacity:"0.85"}));
+        inner.appendChild(el("circle", {class:"focus-ring", r:"20"}));
+      } else {
+        inner.appendChild(el("circle", {class:"halo", r:"13", fill:a.color_hex, opacity:"0.3", filter:"url(#blurTiny)"}));
+        inner.appendChild(el("circle", {class:"dot", r:"5.6", fill:a.color_hex}));
+        inner.appendChild(el("circle", {r:"5.6", fill:"none", stroke:"var(--ring)", "stroke-width":"1.6"}));
+        inner.appendChild(el("circle", {class:"focus-ring", r:"13"}));
+      }
+
+      var lab = labelPlan[a.id];
+      var text = el("text", {
+        class: "label" + (a.is_big_category ? " cat-label" : ""),
+        x: lab.dx, y: lab.dy, "text-anchor": lab.anchor
+      });
+      text.textContent = a.name;
+      inner.appendChild(text);
+
+      var hit = el("circle", {
+        class:"hit", r: a.is_big_category ? "24" : "17",
+        tabindex:"0", role:"button",
+        "aria-label": a.name + (a.is_big_category ? " (big category)" : "")
+      });
+      inner.appendChild(hit);
+
+      node.appendChild(inner);
+      g.appendChild(node);
+      i++;
+    });
+
+    // shared blur filters
+    var defs = document.getElementById("defs");
+    defs.appendChild(el("filter", {id:"blurTiny", x:"-200%", y:"-200%", width:"500%", height:"500%"}))
+      .appendChild(el("feGaussianBlur", {stdDeviation:"2.2"}));
+    defs.appendChild(el("filter", {id:"blurCat", x:"-200%", y:"-200%", width:"500%", height:"500%"}))
+      .appendChild(el("feGaussianBlur", {stdDeviation:"5"}));
+  }
+
+  // ---------------- legend ----------------
+  function buildLegend(container, areas){
+    areas.filter(function(a){ return a.is_big_category; })
+      .sort(function(a,b){ return a.id - b.id; })
+      .forEach(function(a){
+        var row = document.createElement("button");
+        row.type = "button";
+        row.className = "legend-row";
+        row.dataset.id = a.id;
+        var dot = document.createElement("span");
+        dot.className = "legend-dot";
+        dot.style.background = a.color_hex;
+        dot.style.color = a.color_hex;
+        var label = document.createElement("span");
+        label.textContent = a.name;
+        row.appendChild(dot);
+        row.appendChild(label);
+        container.appendChild(row);
+      });
+  }
+
+  // ---------------- table view ----------------
+  function buildTable(tbody, areas, byId, categoryOfArea){
+    areas.slice().sort(function(a,b){
+      if (a.is_big_category !== b.is_big_category) return a.is_big_category ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    }).forEach(function(a){
+      var tr = document.createElement("tr");
+
+      var tdName = document.createElement("td");
+      tdName.className = "name-cell";
+      var sw = document.createElement("span");
+      sw.className = "swatch";
+      sw.style.background = a.color_hex;
+      sw.style.color = a.color_hex;
+      tdName.appendChild(sw);
+      tdName.appendChild(document.createTextNode(a.name));
+      tr.appendChild(tdName);
+
+      var tdCat = document.createElement("td");
+      tdCat.textContent = a.is_big_category ? "— (big category)" : (byId[categoryOfArea[a.id]] ? byId[categoryOfArea[a.id]].name : "—");
+      tr.appendChild(tdCat);
+
+      var tdX = document.createElement("td");
+      tdX.className = "num";
+      tdX.textContent = a.rating_abstract_to_concrete.toFixed(1) + " / 10";
+      tr.appendChild(tdX);
+
+      var tdY = document.createElement("td");
+      tdY.className = "num";
+      tdY.textContent = a.rating_machine_to_human.toFixed(1) + " / 10";
+      tr.appendChild(tdY);
+
+      var tdJ = document.createElement("td");
+      tdJ.textContent = a.top_journals;
+      tr.appendChild(tdJ);
+
+      var tdB = document.createElement("td");
+      tdB.textContent = a.introductory_book;
+      tr.appendChild(tdB);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ---------------- interaction ----------------
+  function wireInteraction(areas, byId, neighbors, categoryOfArea){
+    var svg = document.getElementById("map");
+    var nodesG = document.getElementById("nodes");
+    var panel = document.getElementById("panel");
+    var panelBody = document.getElementById("panelBody");
+    var panelClose = document.getElementById("panelClose");
+
+    var activeId = null;
+    var locked = false;
+
+    function setActive(id, lock){
+      if (activeId === id && locked === !!lock) return;
+      activeId = id;
+      locked = !!lock;
+      render();
+    }
+    function clearActive(){
+      if (activeId === null) return;
+      activeId = null; locked = false;
+      render();
+    }
+
+    function render(){
+      var nbrs = activeId != null ? (neighbors[activeId] || {}) : null;
+
+      Array.prototype.forEach.call(nodesG.children, function(node){
+        var id = Number(node.dataset.id);
+        node.classList.remove("dim","lit","connected");
+        if (activeId == null) return;
+        if (id === activeId) node.classList.add("lit");
+        else if (nbrs[id]) node.classList.add("connected");
+        else node.classList.add("dim");
+      });
+
+      var links = document.querySelectorAll("#links .link");
+      links.forEach(function(line){
+        line.classList.remove("dim","lit");
+        if (activeId == null) return;
+        var a = Number(line.dataset.a), b = Number(line.dataset.b);
+        if (a === activeId || b === activeId) line.classList.add("lit");
+        else line.classList.add("dim");
+      });
+
+      if (activeId != null){
+        fillPanel(byId[activeId]);
+        panel.classList.add("open");
+        panel.setAttribute("aria-hidden","false");
+      } else {
+        panel.classList.remove("open");
+        panel.setAttribute("aria-hidden","true");
+      }
+    }
+
+    function fillPanel(a){
+      panelBody.innerHTML = "";
+
+      var badge = document.createElement("div");
+      badge.className = "panel-badge";
+      var bdot = document.createElement("span");
+      bdot.className = "dot";
+      bdot.style.background = a.color_hex;
+      bdot.style.color = a.color_hex;
+      badge.appendChild(bdot);
+      var btext = document.createElement("span");
+      btext.textContent = a.is_big_category ? "Big category" : ("Part of " + (byId[categoryOfArea[a.id]] ? byId[categoryOfArea[a.id]].name : "the map"));
+      badge.appendChild(btext);
+      panelBody.appendChild(badge);
+
+      var h3 = document.createElement("h3");
+      h3.textContent = a.name;
+      panelBody.appendChild(h3);
+
+      var intro = document.createElement("p");
+      intro.className = "intro";
+      intro.textContent = a.introduction;
+      panelBody.appendChild(intro);
+
+      function field(label, value){
+        var f = document.createElement("div");
+        f.className = "field";
+        var h4 = document.createElement("h4");
+        h4.textContent = label;
+        var d = document.createElement("div");
+        d.textContent = value;
+        f.appendChild(h4); f.appendChild(d);
+        panelBody.appendChild(f);
+      }
+      field("Top venues", a.top_journals);
+      field("Start here", a.introductory_book);
+
+      var coords = document.createElement("div");
+      coords.className = "coords";
+      function coord(label, val){
+        var d = document.createElement("div");
+        var strong = document.createElement("strong");
+        strong.textContent = val.toFixed(1);
+        d.appendChild(strong);
+        d.appendChild(document.createTextNode(label));
+        coords.appendChild(d);
+      }
+      coord("Abstract → concrete", a.rating_abstract_to_concrete);
+      coord("Machine → human", a.rating_machine_to_human);
+      panelBody.appendChild(coords);
+    }
+
+    // pointer: nearest-node snapping across the whole sky
+    var pts = [];
+    areas.forEach(function(a){
+      var node = document.getElementById("node-" + a.id);
+      var t = node.getAttribute("transform").match(/-?\d+\.?\d*/g);
+      pts.push({ id:a.id, x:parseFloat(t[0]), y:parseFloat(t[1]) });
+    });
+    var SNAP = 46;
+
+    function svgPoint(evt){
+      var rect = svg.getBoundingClientRect();
+      var vb = svg.viewBox.baseVal;
+      var scale = Math.min(rect.width/vb.width, rect.height/vb.height);
+      var offX = (rect.width - vb.width*scale)/2;
+      var offY = (rect.height - vb.height*scale)/2;
+      return {
+        x: (evt.clientX - rect.left - offX)/scale + vb.x,
+        y: (evt.clientY - rect.top - offY)/scale + vb.y
+      };
+    }
+
+    svg.addEventListener("pointermove", function(evt){
+      if (locked) return;
+      var p = svgPoint(evt);
+      var best = null, bestD = Infinity;
+      pts.forEach(function(pt){
+        var d = Math.hypot(pt.x-p.x, pt.y-p.y);
+        if (d < bestD){ bestD = d; best = pt; }
+      });
+      if (best && bestD <= SNAP) setActive(best.id, false);
+      else if (!locked) clearActive();
+    });
+    svg.addEventListener("pointerleave", function(){ if (!locked) clearActive(); });
+
+    svg.addEventListener("pointerdown", function(evt){
+      var p = svgPoint(evt);
+      var best = null, bestD = Infinity;
+      pts.forEach(function(pt){
+        var d = Math.hypot(pt.x-p.x, pt.y-p.y);
+        if (d < bestD){ bestD = d; best = pt; }
+      });
+      if (best && bestD <= SNAP) setActive(best.id, true);
+      else clearActive();
+    });
+
+    nodesG.addEventListener("focusin", function(evt){
+      var node = evt.target.closest(".node");
+      if (!node) return;
+      setActive(Number(node.dataset.id), true);
+    });
+    nodesG.addEventListener("focusout", function(evt){
+      var node = evt.target.closest(".node");
+      if (!node) return;
+      // only clear if focus is leaving the whole node group
+      if (!node.contains(evt.relatedTarget)) clearActive();
+    });
+
+    document.addEventListener("keydown", function(evt){
+      if (evt.key === "Escape"){
+        clearActive();
+        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      }
+    });
+
+    document.querySelectorAll(".legend-row").forEach(function(row){
+      row.addEventListener("pointerenter", function(){ setActive(Number(row.dataset.id), false); });
+      row.addEventListener("pointerleave", function(){ if (!locked) clearActive(); });
+      row.addEventListener("click", function(){ setActive(Number(row.dataset.id), true); });
+      row.addEventListener("focus", function(){ setActive(Number(row.dataset.id), true); });
+      row.addEventListener("blur", function(){ clearActive(); });
+    });
+
+    panelClose.addEventListener("click", clearActive);
+  }
+
+  function wireListToggle(){
+    document.getElementById("openList").addEventListener("click", function(){
+      var section = document.getElementById("table-view");
+      section.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+    });
+  }
+})();
 </script>
 </body>
 </html>
