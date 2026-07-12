@@ -25,11 +25,12 @@
     position:relative;
     width:100%;
     height:100vh;
-    overflow:hidden;
+    height:100dvh;
+    overflow:auto;
     background:
       radial-gradient(ellipse 80% 65% at 50% 42%, var(--sky-1) 0%, var(--sky-0) 55%, var(--sky-2) 100%);
   }
-  svg.map{ display:block; width:100%; height:100%; }
+  svg.map{ display:block; }
 
   /* ---------- entrance ----------
      NOTE: the animated scale must live on an INNER group with no SVG
@@ -83,8 +84,9 @@
   .axis-caption{ font-size:11px; letter-spacing:.16em; fill:var(--ink-3); text-transform:uppercase; pointer-events:none; }
 
   /* ---------- overlays ---------- */
-  .overlay{ position:absolute; pointer-events:none; }
+  .overlay{ position:fixed; pointer-events:none; transition:opacity .25s ease; }
   .overlay a, .overlay button, .overlay summary, .overlay [tabindex]{ pointer-events:auto; }
+  body.stage-hidden .overlay{ opacity:0; pointer-events:none; }
 
   .hero-title{ top:28px; left:32px; max-width:min(46vw,520px); }
   .hero-title h1{ margin:0 0 6px; font-size:clamp(20px,2.6vw,30px); font-weight:300; letter-spacing:.02em; color:var(--ink-1); }
@@ -123,11 +125,6 @@
   .panel-close:hover{ color:var(--ink-1); }
 
   @media (max-width:700px){
-    /* Lock the stage to the viewBox's own aspect ratio instead of 100vh —
-       otherwise a portrait phone screen forces "meet" scaling to fit width,
-       and the wide star map letterboxes into a thin horizontal sliver with
-       huge dead space above and below. */
-    .stage{ height:auto; aspect-ratio:1200/840; }
     .label:not(.cat-label){ display:none; }
     .hero-title{ max-width:70vw; }
     .hero-title p{ display:none; }
@@ -167,7 +164,7 @@
 <a class="skip-link" href="#table-view">Skip to list view of all areas</a>
 
 <div class="stage" id="stage">
-  <svg class="map" id="map" viewBox="0 0 1200 840" role="img" aria-label="An interactive star map of computer science areas, positioned by how abstract or concrete they are, and how machine- or human-facing they are.">
+  <svg class="map" id="map" viewBox="0 0 2650 1620" width="2650" height="1620" role="img" aria-label="An interactive star map of computer science areas, positioned by how abstract or concrete they are, and how machine- or human-facing they are. The map is larger than the screen — scroll to explore it.">
     <defs id="defs"></defs>
     <g id="starfield" aria-hidden="true"></g>
     <g id="nebulae" aria-hidden="true"></g>
@@ -219,10 +216,10 @@
 (function(){
   "use strict";
 
-  var VBW = 1200, VBH = 840;
-  var MX = 130, MY_TOP = 110, MY_BOTTOM = 230; // extra bottom margin keeps the plotted
-  // range structurally clear of the bottom-left legend overlay, rather than
-  // fighting it label-by-label after the fact.
+  var VBW = 2650, VBH = 1620;
+  var MX = 290, MY_TOP = 240, MY_BOTTOM = 280; // sky is now scrollable and the
+  // legend is a viewport-fixed overlay, so margins no longer need to dodge it —
+  // just enough inset to keep marks and labels off the scroll edges.
   var PW = VBW - 2*MX, PH = VBH - MY_TOP - MY_BOTTOM;
 
   var SVGNS = "http://www.w3.org/2000/svg";
@@ -243,7 +240,26 @@
     };
   }
 
-  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var motionMQ = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
+  var reduceMotion = motionMQ ? motionMQ.matches : false;
+  var driftHandle = null; // set once nodes exist; see setupDrift()
+  if (motionMQ && motionMQ.addEventListener){
+    motionMQ.addEventListener("change", function(e){
+      reduceMotion = e.matches;
+      if (driftHandle) reduceMotion ? driftHandle.stop() : driftHandle.start();
+    });
+  }
+
+  var stageEl = document.getElementById("stage");
+  // Open centered on the sky rather than its top-left corner.
+  stageEl.scrollLeft = Math.max(0, (VBW - stageEl.clientWidth) / 2);
+  stageEl.scrollTop = Math.max(0, (VBH - stageEl.clientHeight) / 2);
+
+  if (window.IntersectionObserver){
+    new IntersectionObserver(function(entries){
+      document.body.classList.toggle("stage-hidden", !entries[0].isIntersecting);
+    }, { threshold: 0 }).observe(stageEl);
+  }
 
   fetch("data.json").then(function(r){ return r.json(); }).then(function(data){
     init(data);
@@ -312,12 +328,16 @@
 
     wireInteraction(areas, byId, neighbors, categoryOfArea);
     wireListToggle();
+
+    driftHandle = setupDrift(areas, pos, linksG);
+    if (!reduceMotion) driftHandle.start();
   }
 
   // ---------------- starfield ----------------
   function buildStarfield(g){
     var rand = mulberry32(1337);
-    var n = 220, twinkleEvery = 13;
+    var areaRatio = (VBW*VBH) / (1200*840);
+    var n = Math.round(220 * areaRatio), twinkleEvery = 13;
     for (var i=0;i<n;i++){
       var x = rand()*VBW, y = rand()*VBH;
       var r = 0.5 + rand()*1.3;
@@ -575,6 +595,64 @@
     });
   }
 
+  // ---------------- drift ----------------
+  // Stars sway slowly around their true (rating-derived) position, like
+  // csacademy.com's graph nodes. Positions are a pure function of elapsed
+  // time, so pausing/resuming a background tab never causes a jump.
+  function setupDrift(areas, pos, linksG){
+    var rand = mulberry32(4242);
+    var nodes = areas.map(function(a){
+      var isCat = a.is_big_category;
+      var amp = isCat ? (3 + rand()*2) : (5 + rand()*3);
+      return {
+        id: a.id,
+        el: document.getElementById("node-" + a.id),
+        ax: pos[a.id].x, ay: pos[a.id].y,
+        amp: amp,
+        w1: 0.1 + rand()*0.25, w2: 0.1 + rand()*0.25,
+        w3: 0.1 + rand()*0.25, w4: 0.1 + rand()*0.25,
+        p1: rand()*Math.PI*2, p2: rand()*Math.PI*2,
+        p3: rand()*Math.PI*2, p4: rand()*Math.PI*2,
+        curX: pos[a.id].x, curY: pos[a.id].y
+      };
+    });
+    var byId = {};
+    nodes.forEach(function(n){ byId[n.id] = n; });
+
+    var links = Array.prototype.map.call(linksG.querySelectorAll(".link"), function(line){
+      return { el: line, a: byId[Number(line.dataset.a)], b: byId[Number(line.dataset.b)] };
+    });
+
+    var START_DELAY = 1.2, FADE_IN = 2;
+    var rafId = null, t0 = null;
+
+    function frame(nowMs){
+      if (t0 === null) t0 = nowMs;
+      var t = (nowMs - t0) / 1000;
+      var fade = Math.max(0, Math.min(1, (t - START_DELAY) / FADE_IN));
+      if (fade > 0){
+        nodes.forEach(function(n){
+          var dx = fade * (n.amp*Math.sin(n.w1*t+n.p1) + (n.amp/2)*Math.sin(n.w3*t+n.p3));
+          var dy = fade * (n.amp*Math.sin(n.w2*t+n.p2) + (n.amp/2)*Math.sin(n.w4*t+n.p4));
+          n.curX = n.ax + dx; n.curY = n.ay + dy;
+          n.el.setAttribute("transform", "translate(" + n.curX.toFixed(2) + "," + n.curY.toFixed(2) + ")");
+        });
+        links.forEach(function(l){
+          l.el.setAttribute("x1", l.a.curX.toFixed(2));
+          l.el.setAttribute("y1", l.a.curY.toFixed(2));
+          l.el.setAttribute("x2", l.b.curX.toFixed(2));
+          l.el.setAttribute("y2", l.b.curY.toFixed(2));
+        });
+      }
+      rafId = requestAnimationFrame(frame);
+    }
+
+    return {
+      start: function(){ if (rafId === null){ t0 = null; rafId = requestAnimationFrame(frame); } },
+      stop: function(){ if (rafId !== null){ cancelAnimationFrame(rafId); rafId = null; } }
+    };
+  }
+
   // ---------------- interaction ----------------
   function wireInteraction(areas, byId, neighbors, categoryOfArea){
     var svg = document.getElementById("map");
@@ -691,15 +769,11 @@
     var SNAP = 46;
 
     function svgPoint(evt){
+      // The SVG now renders at its natural viewBox pixel size (no scaling,
+      // no letterboxing), so a client point maps 1:1 onto viewBox units;
+      // getBoundingClientRect() already accounts for stage scroll position.
       var rect = svg.getBoundingClientRect();
-      var vb = svg.viewBox.baseVal;
-      var scale = Math.min(rect.width/vb.width, rect.height/vb.height);
-      var offX = (rect.width - vb.width*scale)/2;
-      var offY = (rect.height - vb.height*scale)/2;
-      return {
-        x: (evt.clientX - rect.left - offX)/scale + vb.x,
-        y: (evt.clientY - rect.top - offY)/scale + vb.y
-      };
+      return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
     }
 
     svg.addEventListener("pointermove", function(evt){
@@ -730,6 +804,9 @@
       var node = evt.target.closest(".node");
       if (!node) return;
       setActive(Number(node.dataset.id), true);
+      if (node.scrollIntoView){
+        node.scrollIntoView({ block:"center", inline:"center", behavior: reduceMotion ? "auto" : "smooth" });
+      }
     });
     nodesG.addEventListener("focusout", function(evt){
       var node = evt.target.closest(".node");
