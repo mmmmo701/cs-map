@@ -1,5 +1,6 @@
 .loadingShell {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,6 +10,9 @@
 
 .shell {
   height: 100vh;
+  /* dvh accounts for mobile browser chrome (address bar) so the layout
+     doesn't get clipped or leave a scroll gap as it shows/hides. */
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -41,6 +45,12 @@
 }
 
 .canvas {
+  /* Pinned to the middle track explicitly: FilterPanel/DetailPanel are only
+     rendered as grid children on desktop, so without this, on
+     compact/mobile layouts this ends up as the sole grid child and
+     auto-places into column 1 — the collapsed 0px rail column — instead of
+     the 1fr content column, rendering the entire view at zero width. */
+  grid-column: 2;
   position: relative;
   min-width: 0;
   overflow: auto;

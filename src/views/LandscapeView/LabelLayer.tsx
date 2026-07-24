@@ -60,6 +60,7 @@ export function LabelLayer({
           alwaysVisible: true,
           anchorMode: "centered",
           fontSize: DOMAIN_LABEL_FONT_SIZE,
+          fontWeight: 600,
         });
       }
     }

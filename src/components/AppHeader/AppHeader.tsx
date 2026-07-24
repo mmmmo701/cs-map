@@ -12,10 +12,10 @@ interface AppHeaderProps {
   showFiltersButton: boolean;
 }
 
-const VIEWS: { id: ViewId; label: string }[] = [
-  { id: "landscape", label: "Landscape" },
-  { id: "connections", label: "Connections" },
-  { id: "taxonomy", label: "Taxonomy" },
+const VIEWS: { id: ViewId; label: string; shortLabel: string }[] = [
+  { id: "landscape", label: "Landscape", shortLabel: "Map" },
+  { id: "connections", label: "Connections", shortLabel: "Links" },
+  { id: "taxonomy", label: "Taxonomy", shortLabel: "List" },
 ];
 
 export function AppHeader({ title, searchEngine, showFiltersButton }: AppHeaderProps) {
@@ -29,8 +29,6 @@ export function AppHeader({ title, searchEngine, showFiltersButton }: AppHeaderP
     <header className={styles.header}>
       <h1 className={styles.title}>{title}</h1>
 
-      <SearchBox searchEngine={searchEngine} />
-
       <nav className={styles.tabs} aria-label="View">
         {VIEWS.map((v) => (
           <button
@@ -40,7 +38,8 @@ export function AppHeader({ title, searchEngine, showFiltersButton }: AppHeaderP
             aria-current={view === v.id ? "page" : undefined}
             onClick={() => setView(v.id)}
           >
-            {v.label}
+            <span className={styles.labelFull}>{v.label}</span>
+            <span className={styles.labelShort}>{v.shortLabel}</span>
           </button>
         ))}
       </nav>
@@ -57,8 +56,13 @@ export function AppHeader({ title, searchEngine, showFiltersButton }: AppHeaderP
           </button>
         )}
         <button type="button" className={styles.iconButton} onClick={() => setHelpOpen(true)}>
-          How to read this map
+          <span className={styles.labelFull}>How to read this map</span>
+          <span className={styles.labelShort}>Help</span>
         </button>
+      </div>
+
+      <div className={styles.searchSlot}>
+        <SearchBox searchEngine={searchEngine} />
       </div>
     </header>
   );

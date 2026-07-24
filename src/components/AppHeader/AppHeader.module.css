@@ -1,27 +1,40 @@
 .header {
-  height: var(--header-height);
+  min-height: var(--header-height);
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 0 16px;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--border-subtle);
   background: var(--surface-1);
 }
 
 .title {
+  order: 1;
   font-size: 16px;
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
+.searchSlot {
+  order: 2;
+  position: relative;
+  flex: 1 1 200px;
+  min-width: 160px;
+  max-width: 420px;
+}
+
 .tabs {
+  order: 3;
   display: flex;
   gap: 4px;
   flex-shrink: 0;
 }
 
 .tab {
+  display: flex;
+  align-items: center;
   padding: 7px 14px;
   background: transparent;
   border: 1px solid transparent;
@@ -42,6 +55,7 @@
 }
 
 .actions {
+  order: 4;
   margin-left: auto;
   display: flex;
   gap: 8px;
@@ -49,6 +63,8 @@
 }
 
 .iconButton {
+  display: flex;
+  align-items: center;
   padding: 7px 12px;
   background: transparent;
   border: 1px solid var(--border-subtle);
@@ -64,14 +80,59 @@
   background: var(--surface-2);
 }
 
-@media (max-width: 900px) {
+.labelShort {
+  display: none;
+}
+
+/* Title makes way for the search box first — it's the least essential item
+   once space is tight. Matches the "compact" layout breakpoint used for the
+   rest of the app's chrome (useResponsiveLayout). */
+@media (max-width: 1199px) {
   .title {
     display: none;
   }
 }
 
-@media (max-width: 700px) {
-  .iconButton:not(:last-child) {
+/* Below this, the row no longer fits comfortably: switch to a compact
+   two-line layout — tabs + actions on top, full-width search underneath —
+   rather than letting anything get clipped or pushed off-screen. Every
+   control (including Filters) stays reachable, just smaller. Matches the
+   "mobile" breakpoint used elsewhere (filter/detail panels become sheets). */
+@media (max-width: 799px) {
+  .header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .searchSlot {
+    order: 5;
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .tabs {
+    gap: 3px;
+  }
+
+  .tab {
+    padding: 6px 9px;
+    font-size: 12.5px;
+  }
+
+  .actions {
+    gap: 6px;
+  }
+
+  .iconButton {
+    padding: 6px 10px;
+    font-size: 12.5px;
+  }
+
+  .labelFull {
     display: none;
+  }
+
+  .labelShort {
+    display: inline;
   }
 }

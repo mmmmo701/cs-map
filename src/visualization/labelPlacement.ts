@@ -10,6 +10,7 @@ export interface LabelCandidateInput {
    * titles, which should sit at a fixed point rather than beside a node. */
   anchorMode?: "directional" | "centered";
   fontSize?: number;
+  fontWeight?: number;
 }
 
 export interface PlacedLabel {
@@ -31,10 +32,43 @@ interface Rect {
 }
 
 const FONT_SIZE = 12.5;
-const MAX_LABEL_WIDTH = 220;
+const DEFAULT_FONT_WEIGHT = 500;
+// Safety net for pathologically long strings only — real labels are measured
+// precisely below, so this should rarely (if ever) bind.
+const MAX_LABEL_WIDTH = 600;
 
-function estimateWidth(text: string, fontSize: number): number {
-  return Math.min(MAX_LABEL_WIDTH, text.length * fontSize * 0.56);
+let measureCtx: CanvasRenderingContext2D | null | undefined;
+
+function getMeasureContext(): CanvasRenderingContext2D | null {
+  if (measureCtx !== undefined) return measureCtx;
+  measureCtx = typeof document === "undefined" ? null : document.createElement("canvas").getContext("2d");
+  return measureCtx;
+}
+
+const widthCache = new Map<string, number>();
+
+// Approximation for environments without canvas (e.g. SSR/tests); real
+// rendering always goes through the measured path below it.
+function approximateWidth(text: string, fontSize: number): number {
+  return text.length * fontSize * 0.56;
+}
+
+function estimateWidth(text: string, fontSize: number, fontWeight: number): number {
+  const cacheKey = `${fontWeight}/${fontSize}/${text}`;
+  const cached = widthCache.get(cacheKey);
+  if (cached !== undefined) return cached;
+
+  const ctx = getMeasureContext();
+  const width = ctx
+    ? (() => {
+        ctx.font = `${fontWeight} ${fontSize}px Inter, system-ui, sans-serif`;
+        return ctx.measureText(text).width;
+      })()
+    : approximateWidth(text, fontSize);
+
+  const clamped = Math.min(MAX_LABEL_WIDTH, width);
+  widthCache.set(cacheKey, clamped);
+  return clamped;
 }
 
 function rectsOverlap(a: Rect, b: Rect): boolean {
@@ -60,7 +94,8 @@ export function placeLabels(
 
   for (const label of sorted) {
     const fontSize = label.fontSize ?? FONT_SIZE;
-    const width = estimateWidth(label.text, fontSize);
+    const fontWeight = label.fontWeight ?? DEFAULT_FONT_WEIGHT;
+    const width = estimateWidth(label.text, fontSize, fontWeight);
     const height = fontSize * 1.35;
     const gap = label.nodeRadius + 6;
 
