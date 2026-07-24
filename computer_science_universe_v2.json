@@ -101,14 +101,14 @@
         ]
       },
       {
-        "minimum_zoom": 0.55,
+        "minimum_zoom": 0.8,
         "show": [
           "domain_labels",
-          "priority_1_field_labels"
+          "all_field_nodes"
         ]
       },
       {
-        "minimum_zoom": 0.8,
+        "minimum_zoom": 1.2,
         "show": [
           "domain_labels",
           "all_field_nodes",
@@ -116,14 +116,14 @@
         ]
       },
       {
-        "minimum_zoom": 1.15,
+        "minimum_zoom": 1.6,
         "show": [
           "all_field_labels",
           "visible_constellations"
         ]
       },
       {
-        "minimum_zoom": 1.5,
+        "minimum_zoom": 2.0,
         "show": [
           "all_field_labels",
           "topic_previews"

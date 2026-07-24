@@ -7,8 +7,10 @@ import { useLandscapeZoom } from "../../visualization/zoomController";
 import { useUniverseStore } from "../../state/universeStore";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import {
+  domainRegionScreen,
   resolveVisibleZoomCategories,
   toZoomTransform,
+  type DomainRegionScreen,
   type ScreenPoint,
 } from "./landscapeLayout";
 import { AxesLayer } from "./AxesLayer";
@@ -89,6 +91,11 @@ export function LandscapeCanvas({ index, fields, constellations }: LandscapeCanv
 
   const scales = useMemo(() => createScales(dimensions.width, dimensions.height), [dimensions]);
   const transform = useMemo(() => toZoomTransform(camera), [camera]);
+  const domainRegions = useMemo(() => {
+    const map = new Map<string, DomainRegionScreen>();
+    for (const domain of index.domainsSorted) map.set(domain.id, domainRegionScreen(scales, transform, domain));
+    return map;
+  }, [index, scales, transform]);
 
   useEffect(() => {
     const result = resolveVisibleZoomCategories(index.data.visual_design.semantic_zoom, transform.k, activeZoomIndices);
@@ -228,19 +235,19 @@ export function LandscapeCanvas({ index, fields, constellations }: LandscapeCanv
           onDoubleClickNode={centerOnNode}
           onPositionsComputed={setPositions}
         />
-        {showNodes && (
-          <LabelLayer
-            fields={fields}
-            constellations={constellations}
-            positions={positions}
-            visibleCategories={visibleCategories}
-            selectedNodeId={selectedNodeId}
-            hoveredNodeId={activeHoverId}
-            keyboardFocusedNodeId={keyboardFocusedNodeId}
-            zoomK={transform.k}
-            viewport={dimensions}
-          />
-        )}
+        <LabelLayer
+          domains={index.domainsSorted}
+          domainRegions={domainRegions}
+          fields={fields}
+          constellations={constellations}
+          positions={positions}
+          visibleCategories={visibleCategories}
+          selectedNodeId={selectedNodeId}
+          hoveredNodeId={activeHoverId}
+          keyboardFocusedNodeId={keyboardFocusedNodeId}
+          zoomK={transform.k}
+          viewport={dimensions}
+        />
       </svg>
 
       {activeHoverId && (

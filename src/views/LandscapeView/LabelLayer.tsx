@@ -1,10 +1,14 @@
 import { useMemo } from "react";
-import type { ConstellationNode, FieldNode } from "../../types/universe";
+import type { ConstellationNode, Domain, FieldNode } from "../../types/universe";
 import { placeLabels, type LabelCandidateInput } from "../../visualization/labelPlacement";
-import type { ScreenPoint } from "./landscapeLayout";
+import type { DomainRegionScreen, ScreenPoint } from "./landscapeLayout";
 import { clampNodeRadius } from "./landscapeLayout";
+import { domainColorVar } from "../../styles/applyDomainTheme";
+import { useUniverseStore } from "../../state/universeStore";
 
 interface LabelLayerProps {
+  domains: Domain[];
+  domainRegions: Map<string, DomainRegionScreen>;
   fields: FieldNode[];
   constellations: ConstellationNode[];
   positions: Map<string, ScreenPoint>;
@@ -16,7 +20,11 @@ interface LabelLayerProps {
   viewport: { width: number; height: number };
 }
 
+const DOMAIN_LABEL_FONT_SIZE = 14.5;
+
 export function LabelLayer({
+  domains,
+  domainRegions,
   fields,
   constellations,
   positions,
@@ -27,6 +35,8 @@ export function LabelLayer({
   zoomK,
   viewport,
 }: LabelLayerProps) {
+  const selectNode = useUniverseStore((s) => s.selectNode);
+
   const candidates = useMemo(() => {
     const list: LabelCandidateInput[] = [];
     const isAlwaysVisible = (id: string) =>
@@ -34,6 +44,25 @@ export function LabelLayer({
     const showAllFieldLabels = visibleCategories.has("all_field_labels");
     const showPriority1 = visibleCategories.has("priority_1_field_labels");
     const showConstellationLabels = visibleCategories.has("visible_constellations");
+    const showDomainLabels = visibleCategories.has("domain_labels");
+
+    if (showDomainLabels) {
+      for (const domain of domains) {
+        const region = domainRegions.get(domain.id);
+        if (!region) continue;
+        list.push({
+          id: domain.id,
+          x: region.cx,
+          y: region.cy - region.ry + 16,
+          nodeRadius: 0,
+          text: domain.name,
+          priorityRank: -1,
+          alwaysVisible: true,
+          anchorMode: "centered",
+          fontSize: DOMAIN_LABEL_FONT_SIZE,
+        });
+      }
+    }
 
     for (const field of fields) {
       const point = positions.get(field.id);
@@ -72,30 +101,75 @@ export function LabelLayer({
     }
 
     return list;
-  }, [fields, constellations, positions, visibleCategories, selectedNodeId, hoveredNodeId, keyboardFocusedNodeId, zoomK]);
+  }, [
+    domains,
+    domainRegions,
+    fields,
+    constellations,
+    positions,
+    visibleCategories,
+    selectedNodeId,
+    hoveredNodeId,
+    keyboardFocusedNodeId,
+    zoomK,
+  ]);
 
   const placed = useMemo(() => placeLabels(candidates, viewport), [candidates, viewport]);
+  const domainById = useMemo(() => new Map(domains.map((d) => [d.id, d])), [domains]);
 
   return (
     <g>
-      {[...placed.values()].map((label) => (
-        <text
-          key={label.id}
-          x={label.x}
-          y={label.y}
-          textAnchor={label.anchor}
-          dominantBaseline="middle"
-          fontSize={12.5}
-          fontWeight={500}
-          fill="var(--text-primary)"
-          paintOrder="stroke"
-          stroke="var(--background)"
-          strokeWidth={3}
-          pointerEvents="none"
-        >
-          {label.text}
-        </text>
-      ))}
+      {[...placed.values()].map((label) => {
+        const domain = domainById.get(label.id);
+        if (domain) {
+          const colorVar = `var(${domainColorVar(domain.id)})`;
+          return (
+            <g key={label.id} data-no-pan="true" style={{ cursor: "pointer" }} onClick={() => selectNode(domain.id, { openPanel: true })}>
+              <rect
+                x={label.x - label.width / 2 - 8}
+                y={label.y - label.height / 2 - 3}
+                width={label.width + 16}
+                height={label.height + 6}
+                rx={7}
+                fill="var(--surface-1)"
+                fillOpacity={0.72}
+                stroke={colorVar}
+                strokeOpacity={0.5}
+              />
+              <text
+                x={label.x}
+                y={label.y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize={label.fontSize}
+                fontWeight={600}
+                fill={colorVar}
+                pointerEvents="none"
+              >
+                {label.text}
+              </text>
+            </g>
+          );
+        }
+        return (
+          <text
+            key={label.id}
+            x={label.x}
+            y={label.y}
+            textAnchor={label.anchor}
+            dominantBaseline="middle"
+            fontSize={label.fontSize}
+            fontWeight={500}
+            fill="var(--text-primary)"
+            paintOrder="stroke"
+            stroke="var(--background)"
+            strokeWidth={3}
+            pointerEvents="none"
+          >
+            {label.text}
+          </text>
+        );
+      })}
     </g>
   );
 }

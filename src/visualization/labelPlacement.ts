@@ -6,6 +6,10 @@ export interface LabelCandidateInput {
   text: string;
   priorityRank: number;
   alwaysVisible: boolean;
+  /** "centered" tries a spot centered exactly on (x,y) first — used for domain
+   * titles, which should sit at a fixed point rather than beside a node. */
+  anchorMode?: "directional" | "centered";
+  fontSize?: number;
 }
 
 export interface PlacedLabel {
@@ -16,6 +20,7 @@ export interface PlacedLabel {
   width: number;
   height: number;
   anchor: "start" | "end" | "middle";
+  fontSize: number;
 }
 
 interface Rect {
@@ -26,12 +31,10 @@ interface Rect {
 }
 
 const FONT_SIZE = 12.5;
-const AVG_CHAR_WIDTH = FONT_SIZE * 0.56;
-const LINE_HEIGHT = FONT_SIZE * 1.35;
 const MAX_LABEL_WIDTH = 220;
 
-function estimateWidth(text: string): number {
-  return Math.min(MAX_LABEL_WIDTH, text.length * AVG_CHAR_WIDTH);
+function estimateWidth(text: string, fontSize: number): number {
+  return Math.min(MAX_LABEL_WIDTH, text.length * fontSize * 0.56);
 }
 
 function rectsOverlap(a: Rect, b: Rect): boolean {
@@ -56,11 +59,12 @@ export function placeLabels(
   const sorted = [...labels].sort((a, b) => a.priorityRank - b.priorityRank);
 
   for (const label of sorted) {
-    const width = estimateWidth(label.text);
-    const height = LINE_HEIGHT;
+    const fontSize = label.fontSize ?? FONT_SIZE;
+    const width = estimateWidth(label.text, fontSize);
+    const height = fontSize * 1.35;
     const gap = label.nodeRadius + 6;
 
-    const candidates: { x: number; y: number; anchor: "start" | "end" | "middle"; rect: Rect }[] = [
+    const directional: { x: number; y: number; anchor: "start" | "end" | "middle"; rect: Rect }[] = [
       {
         x: label.x + gap,
         y: label.y,
@@ -97,6 +101,20 @@ export function placeLabels(
       },
     ];
 
+    const centered: (typeof directional)[number] = {
+      x: label.x,
+      y: label.y,
+      anchor: "middle",
+      rect: {
+        left: label.x - width / 2,
+        right: label.x + width / 2,
+        top: label.y - height / 2,
+        bottom: label.y + height / 2,
+      },
+    };
+
+    const candidates = label.anchorMode === "centered" ? [centered, ...directional] : directional;
+
     let chosen: (typeof candidates)[number] | null = null;
     for (const candidate of candidates) {
       const clipped =
@@ -125,6 +143,7 @@ export function placeLabels(
       width,
       height,
       anchor: chosen.anchor,
+      fontSize,
     });
   }
 
