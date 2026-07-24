@@ -1,0 +1,5703 @@
+{
+  "schema_version": "2.0.0",
+  "metadata": {
+    "title": "The Universe of Computer Science",
+    "subtitle": "An interactive atlas of research fields, foundations, systems, applications, and cross-cutting constellations.",
+    "language": "en",
+    "editorial_status": "curated_draft",
+    "content_note": "Field boundaries, representative venues, book choices, and two-dimensional positions are editorial approximations rather than objective rankings. Editions and venue scopes should be reviewed periodically.",
+    "taxonomy_principles": [
+      "Domains are broad navigation regions, not mutually exclusive departments.",
+      "Ordinary fields are established research communities at roughly comparable granularity.",
+      "Bridge fields may have more than one domain parent.",
+      "Constellations are cross-cutting umbrellas, methodologies, ecosystems, or application themes and are not ordinary children.",
+      "Hierarchy and conceptual relationships are stored separately.",
+      "Journals and conferences are separated and described as representative rather than ranked."
+    ],
+    "coordinate_system": {
+      "x": {
+        "name": "abstract_to_concrete",
+        "minimum": 0,
+        "maximum": 100,
+        "left_label": "Abstract",
+        "right_label": "Concrete",
+        "definition": "Lower values emphasize mathematical or conceptual abstraction; higher values emphasize physical systems, deployed artifacts, or direct application."
+      },
+      "y": {
+        "name": "machine_to_human",
+        "minimum": 0,
+        "maximum": 100,
+        "bottom_label": "Machine-centered",
+        "top_label": "Human-centered",
+        "definition": "Lower values primarily study computational machinery or formal mechanisms; higher values study people, institutions, experience, or social consequences."
+      }
+    }
+  },
+  "visual_design": {
+    "views": [
+      {
+        "id": "landscape",
+        "name": "Landscape",
+        "purpose": "Show conceptual position using the two axes.",
+        "layout": "fixed_coordinates",
+        "default_edges": "none",
+        "edge_behavior": "Reveal direct typed relations on hover or selection."
+      },
+      {
+        "id": "connections",
+        "name": "Connections",
+        "purpose": "Explore intellectual relationships from a selected field.",
+        "layout": "focus_centered_network",
+        "default_depth": 1,
+        "maximum_depth": 2
+      },
+      {
+        "id": "taxonomy",
+        "name": "Taxonomy",
+        "purpose": "Browse domains, ordinary fields, bridge fields, and constellations.",
+        "layout": "tree_and_list"
+      }
+    ],
+    "domain_rendering": {
+      "render_as": "soft_regions",
+      "show_centroid_marker": false,
+      "region_fill_opacity": 0.08,
+      "region_border_opacity": 0.28,
+      "label_style": "title_case"
+    },
+    "node_styles": {
+      "ordinary_field": {
+        "shape": "circle",
+        "radius_px": 7,
+        "border_width_px": 2,
+        "fill": "background",
+        "border": "primary_domain_color"
+      },
+      "bridge_field": {
+        "shape": "circle",
+        "radius_px": 8,
+        "border_width_px": 3,
+        "fill": "background",
+        "border": "segmented_domain_colors"
+      },
+      "constellation": {
+        "shape": "outlined_star",
+        "radius_px": 9,
+        "fill": "transparent",
+        "border": "blended_domain_colors",
+        "default_visibility": "hidden"
+      },
+      "selected": {
+        "halo_radius_px": 16,
+        "halo_opacity": 0.28,
+        "pulse_once_ms": 500
+      }
+    },
+    "semantic_zoom": [
+      {
+        "minimum_zoom": 0.0,
+        "show": [
+          "domain_labels"
+        ]
+      },
+      {
+        "minimum_zoom": 0.55,
+        "show": [
+          "domain_labels",
+          "priority_1_field_labels"
+        ]
+      },
+      {
+        "minimum_zoom": 0.8,
+        "show": [
+          "domain_labels",
+          "all_field_nodes",
+          "priority_1_field_labels"
+        ]
+      },
+      {
+        "minimum_zoom": 1.15,
+        "show": [
+          "all_field_labels",
+          "visible_constellations"
+        ]
+      },
+      {
+        "minimum_zoom": 1.5,
+        "show": [
+          "all_field_labels",
+          "topic_previews"
+        ]
+      }
+    ],
+    "interaction": {
+      "hover": [
+        "raise_node",
+        "show_full_label",
+        "highlight_direct_relations",
+        "fade_unrelated_nodes"
+      ],
+      "click": [
+        "select_node",
+        "open_details_panel",
+        "persist_edges",
+        "update_url"
+      ],
+      "search_select": [
+        "center_node",
+        "pulse_once",
+        "open_details_panel"
+      ],
+      "keyboard": {
+        "search": "/",
+        "open": "Enter",
+        "close_panel": "Escape",
+        "navigate_nearby": "Arrow keys"
+      }
+    },
+    "details_panel": {
+      "side": "right",
+      "desktop_width_px": 420,
+      "mobile_mode": "bottom_sheet",
+      "sections": [
+        "summary",
+        "representative_topics",
+        "domain_membership",
+        "related_fields",
+        "representative_venues",
+        "books",
+        "position_explanation"
+      ],
+      "default_expanded": [
+        "summary",
+        "representative_topics",
+        "related_fields"
+      ]
+    },
+    "filters": [
+      "domains",
+      "node_class",
+      "abstract_to_concrete_range",
+      "machine_to_human_range",
+      "relationship_type",
+      "show_constellations"
+    ],
+    "search_index_fields": [
+      "name",
+      "aliases",
+      "summary",
+      "representative_topics",
+      "books.title",
+      "representative_venues.journals",
+      "representative_venues.conferences"
+    ]
+  },
+  "relation_types": [
+    {
+      "id": "part_of",
+      "label": "Part of",
+      "directed": true,
+      "description": "Taxonomic membership.",
+      "style": {
+        "line": "solid",
+        "arrow": "target",
+        "default_visibility": "taxonomy_only"
+      }
+    },
+    {
+      "id": "uses_methods_from",
+      "label": "Uses methods from",
+      "directed": true,
+      "description": "The source substantially uses techniques from the target.",
+      "style": {
+        "line": "solid",
+        "arrow": "target",
+        "default_visibility": "on_focus"
+      }
+    },
+    {
+      "id": "theoretical_foundation_for",
+      "label": "Theoretical foundation for",
+      "directed": true,
+      "description": "The source supplies formal foundations or guarantees for the target.",
+      "style": {
+        "line": "solid",
+        "arrow": "target",
+        "default_visibility": "on_focus"
+      }
+    },
+    {
+      "id": "systems_foundation_for",
+      "label": "Systems foundation for",
+      "directed": true,
+      "description": "The source supplies infrastructure for the target.",
+      "style": {
+        "line": "solid",
+        "arrow": "target",
+        "default_visibility": "on_focus"
+      }
+    },
+    {
+      "id": "overlaps_with",
+      "label": "Overlaps with",
+      "directed": false,
+      "description": "The fields share questions, methods, communities, or artifacts.",
+      "style": {
+        "line": "dashed",
+        "arrow": "none",
+        "default_visibility": "on_focus"
+      }
+    },
+    {
+      "id": "applied_to",
+      "label": "Applied to",
+      "directed": true,
+      "description": "Methods from the source are widely applied to the target.",
+      "style": {
+        "line": "dotted",
+        "arrow": "target",
+        "default_visibility": "on_focus"
+      }
+    },
+    {
+      "id": "synthesizes",
+      "label": "Synthesizes",
+      "directed": false,
+      "description": "A constellation is formed by several component fields.",
+      "style": {
+        "line": "double",
+        "arrow": "none",
+        "default_visibility": "constellation_focus"
+      }
+    }
+  ],
+  "domains": [
+    {
+      "id": "theory-algorithms",
+      "name": "Theory & Algorithms",
+      "short_name": "Theory",
+      "color": "#A56DE2",
+      "summary": "The mathematical study of computation, efficient algorithms, computational limits, and rigorous guarantees.",
+      "region": {
+        "center": {
+          "x": 18,
+          "y": 27
+        },
+        "radius_x": 22,
+        "radius_y": 21
+      },
+      "display_order": 1,
+      "field_ids": [
+        "automata-formal-languages-and-computability",
+        "computational-complexity",
+        "algorithms-and-data-structures",
+        "cryptography",
+        "quantum-computing-and-information",
+        "computational-learning-theory",
+        "algorithmic-economics-and-game-theory",
+        "optimization",
+        "information-theory-and-coding",
+        "parallel-and-distributed-systems",
+        "programming-languages-and-semantics",
+        "program-analysis-verification-and-synthesis",
+        "search-planning-and-decision-making",
+        "knowledge-representation-and-reasoning",
+        "multiagent-systems",
+        "applied-cryptography"
+      ]
+    },
+    {
+      "id": "math-stat-optimization",
+      "name": "Mathematical, Statistical & Optimization Foundations",
+      "short_name": "Math & Statistics",
+      "color": "#D6B53A",
+      "summary": "Mathematical languages and methods used throughout computer science.",
+      "region": {
+        "center": {
+          "x": 25,
+          "y": 43
+        },
+        "radius_x": 23,
+        "radius_y": 20
+      },
+      "display_order": 2,
+      "field_ids": [
+        "computational-learning-theory",
+        "algorithmic-economics-and-game-theory",
+        "discrete-mathematics-and-logic",
+        "probability-and-statistics",
+        "optimization",
+        "information-theory-and-coding",
+        "numerical-analysis",
+        "data-mining-and-knowledge-discovery",
+        "machine-learning",
+        "numerical-and-scientific-computing",
+        "computational-sustainability"
+      ]
+    },
+    {
+      "id": "computer-systems",
+      "name": "Computer Systems",
+      "short_name": "Systems",
+      "color": "#E9792F",
+      "summary": "The hardware and software infrastructure that executes programs, communicates, and stores information.",
+      "region": {
+        "center": {
+          "x": 82,
+          "y": 23
+        },
+        "radius_x": 20,
+        "radius_y": 22
+      },
+      "display_order": 3,
+      "field_ids": [
+        "quantum-computing-and-information",
+        "information-theory-and-coding",
+        "computer-architecture-and-organization",
+        "operating-systems",
+        "networking-and-communication",
+        "parallel-and-distributed-systems",
+        "storage-systems",
+        "cloud-and-datacenter-systems",
+        "embedded-real-time-and-cyber-physical-systems",
+        "compilers-and-runtime-systems",
+        "databases-and-data-management",
+        "data-systems-and-engineering",
+        "robotics-and-autonomous-systems",
+        "computer-graphics",
+        "virtual-augmented-and-mixed-reality",
+        "systems-and-software-security",
+        "network-security",
+        "hardware-security",
+        "numerical-and-scientific-computing",
+        "geospatial-and-urban-computing",
+        "sustainable-computing-and-environmental-impact"
+      ]
+    },
+    {
+      "id": "pl-software-engineering",
+      "name": "Programming Languages & Software Engineering",
+      "short_name": "PL & Software",
+      "color": "#42C983",
+      "summary": "The meaning, implementation, construction, analysis, and maintenance of software.",
+      "region": {
+        "center": {
+          "x": 48,
+          "y": 27
+        },
+        "radius_x": 22,
+        "radius_y": 20
+      },
+      "display_order": 4,
+      "field_ids": [
+        "programming-languages-and-semantics",
+        "compilers-and-runtime-systems",
+        "program-analysis-verification-and-synthesis",
+        "software-engineering",
+        "software-testing-reliability-and-maintenance",
+        "systems-and-software-security",
+        "computing-profession-and-practice"
+      ]
+    },
+    {
+      "id": "data-information",
+      "name": "Data & Information",
+      "short_name": "Data",
+      "color": "#4EA3E3",
+      "summary": "The representation, storage, retrieval, integration, and discovery of information.",
+      "region": {
+        "center": {
+          "x": 62,
+          "y": 54
+        },
+        "radius_x": 20,
+        "radius_y": 20
+      },
+      "display_order": 5,
+      "field_ids": [
+        "storage-systems",
+        "databases-and-data-management",
+        "data-systems-and-engineering",
+        "information-retrieval-and-search",
+        "data-mining-and-knowledge-discovery",
+        "knowledge-graphs-and-semantic-data",
+        "natural-language-and-speech",
+        "visualization",
+        "privacy-enhancing-technologies",
+        "computational-biology-and-bioinformatics",
+        "health-informatics-and-computational-medicine",
+        "computational-social-science",
+        "digital-humanities",
+        "geospatial-and-urban-computing"
+      ]
+    },
+    {
+      "id": "artificial-intelligence",
+      "name": "Artificial Intelligence",
+      "short_name": "AI",
+      "color": "#E84D9B",
+      "summary": "Computational systems that perceive, reason, learn, communicate, decide, and act.",
+      "region": {
+        "center": {
+          "x": 52,
+          "y": 61
+        },
+        "radius_x": 22,
+        "radius_y": 22
+      },
+      "display_order": 6,
+      "field_ids": [
+        "computational-learning-theory",
+        "information-retrieval-and-search",
+        "data-mining-and-knowledge-discovery",
+        "knowledge-graphs-and-semantic-data",
+        "search-planning-and-decision-making",
+        "knowledge-representation-and-reasoning",
+        "machine-learning",
+        "natural-language-and-speech",
+        "computer-vision-and-perception",
+        "robotics-and-autonomous-systems",
+        "multiagent-systems",
+        "games-and-interactive-media",
+        "computational-biology-and-bioinformatics",
+        "health-informatics-and-computational-medicine",
+        "computational-sustainability",
+        "ethics-fairness-and-accountability"
+      ]
+    },
+    {
+      "id": "graphics-visualization-interaction",
+      "name": "Graphics, Visualization & Interaction",
+      "short_name": "Graphics & HCI",
+      "color": "#2CCED2",
+      "summary": "The synthesis and presentation of visual content and the design and study of interactive systems.",
+      "region": {
+        "center": {
+          "x": 77,
+          "y": 82
+        },
+        "radius_x": 20,
+        "radius_y": 18
+      },
+      "display_order": 7,
+      "field_ids": [
+        "computer-vision-and-perception",
+        "computer-graphics",
+        "visualization",
+        "human-computer-interaction",
+        "accessibility-and-inclusive-computing",
+        "computer-supported-cooperative-work-and-social-computing",
+        "games-and-interactive-media",
+        "virtual-augmented-and-mixed-reality",
+        "usable-security-and-privacy",
+        "digital-humanities",
+        "computer-science-education"
+      ]
+    },
+    {
+      "id": "security-privacy",
+      "name": "Security & Privacy",
+      "short_name": "Security",
+      "color": "#F06E71",
+      "summary": "The protection of systems, communications, hardware, software, and information under adversarial behavior.",
+      "region": {
+        "center": {
+          "x": 66,
+          "y": 43
+        },
+        "radius_x": 18,
+        "radius_y": 18
+      },
+      "display_order": 8,
+      "field_ids": [
+        "cryptography",
+        "systems-and-software-security",
+        "network-security",
+        "hardware-security",
+        "applied-cryptography",
+        "privacy-enhancing-technologies",
+        "usable-security-and-privacy",
+        "digital-forensics",
+        "computing-law-policy-and-governance"
+      ]
+    },
+    {
+      "id": "interdisciplinary-computing",
+      "name": "Computational Science & Interdisciplinary Computing",
+      "short_name": "Interdisciplinary",
+      "color": "#F0C83D",
+      "summary": "Computational research organized around scientific, medical, social, cultural, geographic, or environmental domains.",
+      "region": {
+        "center": {
+          "x": 65,
+          "y": 74
+        },
+        "radius_x": 24,
+        "radius_y": 20
+      },
+      "display_order": 9,
+      "field_ids": [
+        "numerical-and-scientific-computing",
+        "computational-biology-and-bioinformatics",
+        "health-informatics-and-computational-medicine",
+        "computational-social-science",
+        "digital-humanities",
+        "geospatial-and-urban-computing",
+        "computational-sustainability"
+      ]
+    },
+    {
+      "id": "computing-society-education",
+      "name": "Computing, Society & Education",
+      "short_name": "Society & Education",
+      "color": "#B58BE8",
+      "summary": "Computing as a social institution, profession, environmental force, and subject people teach and learn.",
+      "region": {
+        "center": {
+          "x": 47,
+          "y": 92
+        },
+        "radius_x": 28,
+        "radius_y": 13
+      },
+      "display_order": 10,
+      "field_ids": [
+        "accessibility-and-inclusive-computing",
+        "computer-supported-cooperative-work-and-social-computing",
+        "computational-social-science",
+        "computational-sustainability",
+        "ethics-fairness-and-accountability",
+        "computing-law-policy-and-governance",
+        "social-impacts-of-computing",
+        "computer-science-education",
+        "computing-profession-and-practice",
+        "sustainable-computing-and-environmental-impact"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "id": "automata-formal-languages-and-computability",
+      "name": "Automata, Formal Languages & Computability",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "theory-algorithms",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 8,
+        "machine_to_human": 18,
+        "confidence": "medium"
+      },
+      "summary": "Formal models of computation, language recognition, decidability, and the boundary between computable and uncomputable problems.",
+      "representative_topics": [
+        "finite automata",
+        "context-free languages",
+        "Turing machines",
+        "decidability",
+        "reductions"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Information and Computation",
+          "Theoretical Computer Science"
+        ],
+        "conferences": [
+          "LICS",
+          "ICALP"
+        ]
+      },
+      "books": [
+        {
+          "title": "Introduction to the Theory of Computation",
+          "authors": [
+            "Michael Sipser"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computational-complexity",
+      "name": "Computational Complexity",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "theory-algorithms",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 7,
+        "machine_to_human": 25,
+        "confidence": "medium"
+      },
+      "summary": "The resources required to solve problems under models such as time, space, communication, randomness, and queries.",
+      "representative_topics": [
+        "complexity classes",
+        "reductions",
+        "circuit complexity",
+        "proof complexity",
+        "communication complexity"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Computational Complexity",
+          "SIAM Journal on Computing"
+        ],
+        "conferences": [
+          "STOC",
+          "FOCS",
+          "CCC"
+        ]
+      },
+      "books": [
+        {
+          "title": "Computational Complexity: A Modern Approach",
+          "authors": [
+            "Sanjeev Arora",
+            "Boaz Barak"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "algorithms-and-data-structures",
+      "name": "Algorithms & Data Structures",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "theory-algorithms",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 18,
+        "machine_to_human": 29,
+        "confidence": "medium"
+      },
+      "summary": "The design and analysis of efficient procedures and representations for computational problems.",
+      "representative_topics": [
+        "graph algorithms",
+        "randomized algorithms",
+        "approximation",
+        "online algorithms",
+        "data structures"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Algorithms",
+          "SIAM Journal on Computing"
+        ],
+        "conferences": [
+          "SODA",
+          "ESA",
+          "STOC",
+          "FOCS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Algorithm Design",
+          "authors": [
+            "Jon Kleinberg",
+            "Éva Tardos"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        },
+        {
+          "title": "Introduction to Algorithms",
+          "authors": [
+            "Thomas H. Cormen",
+            "Charles E. Leiserson",
+            "Ronald L. Rivest",
+            "Clifford Stein"
+          ],
+          "level": "reference",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "cryptography",
+      "name": "Cryptography",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "theory-algorithms",
+        "security-privacy"
+      ],
+      "primary_domain_id": "theory-algorithms",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 20,
+        "machine_to_human": 37,
+        "confidence": "medium"
+      },
+      "summary": "Protocols that protect information and computation using formal adversarial models and computational hardness.",
+      "representative_topics": [
+        "encryption",
+        "digital signatures",
+        "zero knowledge",
+        "secure computation",
+        "pseudorandomness"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Journal of Cryptology",
+          "Designs, Codes and Cryptography"
+        ],
+        "conferences": [
+          "CRYPTO",
+          "EUROCRYPT",
+          "TCC"
+        ]
+      },
+      "books": [
+        {
+          "title": "Introduction to Modern Cryptography",
+          "authors": [
+            "Jonathan Katz",
+            "Yehuda Lindell"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "quantum-computing-and-information",
+      "name": "Quantum Computing & Information",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "theory-algorithms",
+        "computer-systems"
+      ],
+      "primary_domain_id": "theory-algorithms",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 22,
+        "machine_to_human": 16,
+        "confidence": "medium"
+      },
+      "summary": "Quantum models of computation and information, including algorithms, complexity, communication, error correction, and realization.",
+      "representative_topics": [
+        "quantum algorithms",
+        "quantum complexity",
+        "quantum communication",
+        "error correction",
+        "quantum architectures"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Quantum",
+          "Quantum Information & Computation"
+        ],
+        "conferences": [
+          "QIP",
+          "TQC"
+        ]
+      },
+      "books": [
+        {
+          "title": "Quantum Computation and Quantum Information",
+          "authors": [
+            "Michael A. Nielsen",
+            "Isaac L. Chuang"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computational-learning-theory",
+      "name": "Computational Learning Theory",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "theory-algorithms",
+        "artificial-intelligence",
+        "math-stat-optimization"
+      ],
+      "primary_domain_id": "theory-algorithms",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 24,
+        "machine_to_human": 48,
+        "confidence": "medium"
+      },
+      "summary": "The proof-oriented study of learnability, generalization, sample complexity, online learning, and computational limits of learning.",
+      "representative_topics": [
+        "PAC learning",
+        "VC dimension",
+        "online learning",
+        "sample complexity",
+        "generalization"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Journal of Machine Learning Research",
+          "Machine Learning"
+        ],
+        "conferences": [
+          "COLT",
+          "ALT"
+        ]
+      },
+      "books": [
+        {
+          "title": "Understanding Machine Learning: From Theory to Algorithms",
+          "authors": [
+            "Shai Shalev-Shwartz",
+            "Shai Ben-David"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "algorithmic-economics-and-game-theory",
+      "name": "Algorithmic Economics & Game Theory",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "theory-algorithms",
+        "math-stat-optimization"
+      ],
+      "primary_domain_id": "theory-algorithms",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 28,
+        "machine_to_human": 63,
+        "confidence": "medium"
+      },
+      "summary": "Algorithms and computational questions arising from strategic agents, incentives, markets, and collective choice.",
+      "representative_topics": [
+        "equilibrium computation",
+        "mechanism design",
+        "auctions",
+        "price of anarchy",
+        "social choice"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Economics and Computation",
+          "Games and Economic Behavior"
+        ],
+        "conferences": [
+          "EC",
+          "WINE"
+        ]
+      },
+      "books": [
+        {
+          "title": "Algorithmic Game Theory",
+          "authors": [
+            "Noam Nisan",
+            "Tim Roughgarden",
+            "Éva Tardos",
+            "Vijay V. Vazirani"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "discrete-mathematics-and-logic",
+      "name": "Discrete Mathematics & Logic",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "math-stat-optimization"
+      ],
+      "primary_domain_id": "math-stat-optimization",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 13,
+        "machine_to_human": 43,
+        "confidence": "medium"
+      },
+      "summary": "Discrete structures and proof systems used to model computation.",
+      "representative_topics": [
+        "graph theory",
+        "combinatorics",
+        "propositional logic",
+        "first-order logic",
+        "algebraic methods"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Journal of Combinatorial Theory",
+          "Annals of Pure and Applied Logic"
+        ],
+        "conferences": [
+          "LICS",
+          "ICALP"
+        ]
+      },
+      "books": [
+        {
+          "title": "Concrete Mathematics",
+          "authors": [
+            "Ronald L. Graham",
+            "Donald E. Knuth",
+            "Oren Patashnik"
+          ],
+          "level": "intermediate",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "probability-and-statistics",
+      "name": "Probability & Statistics",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "math-stat-optimization"
+      ],
+      "primary_domain_id": "math-stat-optimization",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 27,
+        "machine_to_human": 54,
+        "confidence": "medium"
+      },
+      "summary": "Mathematical frameworks for uncertainty, inference, estimation, evidence, and stochastic processes.",
+      "representative_topics": [
+        "probability distributions",
+        "statistical inference",
+        "concentration",
+        "Bayesian methods",
+        "stochastic processes"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Annals of Statistics",
+          "Journal of the American Statistical Association"
+        ],
+        "conferences": [
+          "AISTATS",
+          "UAI"
+        ]
+      },
+      "books": [
+        {
+          "title": "Introduction to Probability",
+          "authors": [
+            "Joseph K. Blitzstein",
+            "Jessica Hwang"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "optimization",
+      "name": "Optimization",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "math-stat-optimization",
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "math-stat-optimization",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 35,
+        "machine_to_human": 43,
+        "confidence": "medium"
+      },
+      "summary": "Selecting optimal or near-optimal decisions under objectives, constraints, uncertainty, and computational limits.",
+      "representative_topics": [
+        "convex optimization",
+        "combinatorial optimization",
+        "integer programming",
+        "stochastic optimization",
+        "online optimization"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Mathematical Programming",
+          "Operations Research"
+        ],
+        "conferences": [
+          "IPCO",
+          "ISMP"
+        ]
+      },
+      "books": [
+        {
+          "title": "Convex Optimization",
+          "authors": [
+            "Stephen Boyd",
+            "Lieven Vandenberghe"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "information-theory-and-coding",
+      "name": "Information Theory & Coding",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "math-stat-optimization",
+        "theory-algorithms",
+        "computer-systems"
+      ],
+      "primary_domain_id": "math-stat-optimization",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 30,
+        "machine_to_human": 33,
+        "confidence": "medium"
+      },
+      "summary": "The quantitative study of information, compression, communication, coding, and inference under noise.",
+      "representative_topics": [
+        "entropy",
+        "channel capacity",
+        "source coding",
+        "error-correcting codes",
+        "rate-distortion"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Information Theory"
+        ],
+        "conferences": [
+          "ISIT",
+          "ITW"
+        ]
+      },
+      "books": [
+        {
+          "title": "Elements of Information Theory",
+          "authors": [
+            "Thomas M. Cover",
+            "Joy A. Thomas"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "numerical-analysis",
+      "name": "Numerical Analysis",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "math-stat-optimization"
+      ],
+      "primary_domain_id": "math-stat-optimization",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 39,
+        "machine_to_human": 31,
+        "confidence": "medium"
+      },
+      "summary": "Algorithms that approximate continuous mathematical problems, with emphasis on error, stability, conditioning, and convergence.",
+      "representative_topics": [
+        "numerical linear algebra",
+        "approximation",
+        "root finding",
+        "differential equations",
+        "stability"
+      ],
+      "representative_venues": {
+        "journals": [
+          "SIAM Journal on Numerical Analysis",
+          "Numerische Mathematik"
+        ],
+        "conferences": [
+          "SIAM CSE"
+        ]
+      },
+      "books": [
+        {
+          "title": "Numerical Linear Algebra",
+          "authors": [
+            "Lloyd N. Trefethen",
+            "David Bau III"
+          ],
+          "level": "intermediate",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computer-architecture-and-organization",
+      "name": "Computer Architecture & Organization",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "computer-systems"
+      ],
+      "primary_domain_id": "computer-systems",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 92,
+        "machine_to_human": 8,
+        "confidence": "medium"
+      },
+      "summary": "Instruction sets, processors, accelerators, memory hierarchies, performance, and hardware–software interfaces.",
+      "representative_topics": [
+        "instruction sets",
+        "microarchitecture",
+        "caches",
+        "memory systems",
+        "accelerators"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Micro",
+          "ACM Transactions on Architecture and Code Optimization"
+        ],
+        "conferences": [
+          "ISCA",
+          "MICRO",
+          "ASPLOS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Computer Organization and Design",
+          "authors": [
+            "David A. Patterson",
+            "John L. Hennessy"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "operating-systems",
+      "name": "Operating Systems",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "computer-systems"
+      ],
+      "primary_domain_id": "computer-systems",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 84,
+        "machine_to_human": 18,
+        "confidence": "medium"
+      },
+      "summary": "Resource management, processes, virtual memory, storage, filesystems, concurrency, isolation, and virtualization.",
+      "representative_topics": [
+        "processes",
+        "scheduling",
+        "virtual memory",
+        "filesystems",
+        "virtualization",
+        "isolation"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Computer Systems"
+        ],
+        "conferences": [
+          "SOSP",
+          "OSDI",
+          "EuroSys"
+        ]
+      },
+      "books": [
+        {
+          "title": "Operating Systems: Three Easy Pieces",
+          "authors": [
+            "Remzi H. Arpaci-Dusseau",
+            "Andrea C. Arpaci-Dusseau"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "networking-and-communication",
+      "name": "Networking & Communication",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "computer-systems"
+      ],
+      "primary_domain_id": "computer-systems",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 89,
+        "machine_to_human": 35,
+        "confidence": "medium"
+      },
+      "summary": "Protocols and systems for communication across wired, wireless, mobile, and large-scale networks.",
+      "representative_topics": [
+        "routing",
+        "congestion control",
+        "transport protocols",
+        "wireless networks",
+        "network measurement"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE/ACM Transactions on Networking"
+        ],
+        "conferences": [
+          "SIGCOMM",
+          "NSDI",
+          "INFOCOM"
+        ]
+      },
+      "books": [
+        {
+          "title": "Computer Networking: A Top-Down Approach",
+          "authors": [
+            "James F. Kurose",
+            "Keith W. Ross"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "parallel-and-distributed-systems",
+      "name": "Parallel & Distributed Systems",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "computer-systems",
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "computer-systems",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 77,
+        "machine_to_human": 28,
+        "confidence": "medium"
+      },
+      "summary": "Computation across multiple processors or machines, including coordination, consistency, scalability, and fault tolerance.",
+      "representative_topics": [
+        "distributed algorithms",
+        "consensus",
+        "consistency",
+        "parallelism",
+        "fault tolerance",
+        "replication"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Parallel and Distributed Systems",
+          "Distributed Computing"
+        ],
+        "conferences": [
+          "PODC",
+          "SPAA",
+          "ICDCS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Distributed Algorithms",
+          "authors": [
+            "Nancy A. Lynch"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "storage-systems",
+      "name": "Storage Systems",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "computer-systems",
+        "data-information"
+      ],
+      "primary_domain_id": "computer-systems",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 80,
+        "machine_to_human": 39,
+        "confidence": "medium"
+      },
+      "summary": "Persistent storage, filesystems, caching, replication, storage hardware, and reliable access to large data collections.",
+      "representative_topics": [
+        "filesystems",
+        "distributed storage",
+        "caching",
+        "replication",
+        "nonvolatile memory"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Storage"
+        ],
+        "conferences": [
+          "FAST",
+          "MSST"
+        ]
+      },
+      "books": [
+        {
+          "title": "Database Internals",
+          "authors": [
+            "Alex Petrov"
+          ],
+          "level": "practitioner",
+          "coverage_note": "Focuses on storage engines and distributed data systems."
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "cloud-and-datacenter-systems",
+      "name": "Cloud & Datacenter Systems",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "computer-systems"
+      ],
+      "primary_domain_id": "computer-systems",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 88,
+        "machine_to_human": 45,
+        "confidence": "medium"
+      },
+      "summary": "Large-scale infrastructure, including datacenter architecture, scheduling, virtualization, service operation, and energy efficiency.",
+      "representative_topics": [
+        "datacenter architecture",
+        "resource scheduling",
+        "virtualization",
+        "service reliability",
+        "energy efficiency"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Cloud Computing"
+        ],
+        "conferences": [
+          "SoCC",
+          "EuroSys"
+        ]
+      },
+      "books": [
+        {
+          "title": "The Datacenter as a Computer",
+          "authors": [
+            "Luiz André Barroso",
+            "Urs Hölzle",
+            "Parthasarathy Ranganathan"
+          ],
+          "level": "intermediate",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "embedded-real-time-and-cyber-physical-systems",
+      "name": "Embedded, Real-Time & Cyber-Physical Systems",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "computer-systems"
+      ],
+      "primary_domain_id": "computer-systems",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 94,
+        "machine_to_human": 51,
+        "confidence": "medium"
+      },
+      "summary": "Computing embedded in physical environments under timing, safety, sensing, actuation, energy, and reliability constraints.",
+      "representative_topics": [
+        "real-time scheduling",
+        "sensors",
+        "actuators",
+        "safety-critical systems",
+        "edge computing"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Embedded Computing Systems",
+          "ACM Transactions on Cyber-Physical Systems"
+        ],
+        "conferences": [
+          "EMSOFT",
+          "RTSS",
+          "ICCPS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Introduction to Embedded Systems: A Cyber-Physical Systems Approach",
+          "authors": [
+            "Edward A. Lee",
+            "Sanjit A. Seshia"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "programming-languages-and-semantics",
+      "name": "Programming Languages & Semantics",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "pl-software-engineering",
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "pl-software-engineering",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 34,
+        "machine_to_human": 24,
+        "confidence": "medium"
+      },
+      "summary": "Language design, type systems, semantics, paradigms, modules, effects, and reasoning about programs.",
+      "representative_topics": [
+        "type systems",
+        "operational semantics",
+        "denotational semantics",
+        "functional programming",
+        "effects"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Programming Languages and Systems",
+          "Journal of Functional Programming"
+        ],
+        "conferences": [
+          "POPL",
+          "ICFP",
+          "OOPSLA"
+        ]
+      },
+      "books": [
+        {
+          "title": "Types and Programming Languages",
+          "authors": [
+            "Benjamin C. Pierce"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "compilers-and-runtime-systems",
+      "name": "Compilers & Runtime Systems",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "pl-software-engineering",
+        "computer-systems"
+      ],
+      "primary_domain_id": "pl-software-engineering",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 58,
+        "machine_to_human": 17,
+        "confidence": "medium"
+      },
+      "summary": "Translation and execution through parsing, intermediate representations, optimization, code generation, interpretation, and runtimes.",
+      "representative_topics": [
+        "parsing",
+        "intermediate representations",
+        "optimization",
+        "code generation",
+        "JIT compilation",
+        "garbage collection"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Architecture and Code Optimization"
+        ],
+        "conferences": [
+          "PLDI",
+          "CGO",
+          "OOPSLA"
+        ]
+      },
+      "books": [
+        {
+          "title": "Engineering a Compiler",
+          "authors": [
+            "Keith D. Cooper",
+            "Linda Torczon"
+          ],
+          "level": "intermediate",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "program-analysis-verification-and-synthesis",
+      "name": "Program Analysis, Verification & Synthesis",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "pl-software-engineering",
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "pl-software-engineering",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 38,
+        "machine_to_human": 34,
+        "confidence": "medium"
+      },
+      "summary": "Techniques for extracting program properties, proving correctness, finding defects, or constructing programs from specifications.",
+      "representative_topics": [
+        "abstract interpretation",
+        "model checking",
+        "theorem proving",
+        "symbolic execution",
+        "program synthesis"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Formal Methods in System Design",
+          "ACM Transactions on Programming Languages and Systems"
+        ],
+        "conferences": [
+          "CAV",
+          "LICS",
+          "FMCAD",
+          "POPL"
+        ]
+      },
+      "books": [
+        {
+          "title": "Principles of Program Analysis",
+          "authors": [
+            "Flemming Nielson",
+            "Hanne Riis Nielson",
+            "Chris Hankin"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "software-engineering",
+      "name": "Software Engineering",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "pl-software-engineering"
+      ],
+      "primary_domain_id": "pl-software-engineering",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 57,
+        "machine_to_human": 40,
+        "confidence": "medium"
+      },
+      "summary": "The systematic design, construction, collaboration, evolution, and empirical study of complex software systems.",
+      "representative_topics": [
+        "requirements",
+        "software architecture",
+        "development processes",
+        "maintenance",
+        "empirical software engineering"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Software Engineering",
+          "ACM Transactions on Software Engineering and Methodology"
+        ],
+        "conferences": [
+          "ICSE",
+          "FSE"
+        ]
+      },
+      "books": [
+        {
+          "title": "Software Engineering",
+          "authors": [
+            "Ian Sommerville"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "software-testing-reliability-and-maintenance",
+      "name": "Software Testing, Reliability & Maintenance",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "pl-software-engineering"
+      ],
+      "primary_domain_id": "pl-software-engineering",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 63,
+        "machine_to_human": 34,
+        "confidence": "medium"
+      },
+      "summary": "Methods for detecting defects, debugging, measuring reliability, repairing failures, and sustaining software over time.",
+      "representative_topics": [
+        "testing",
+        "debugging",
+        "fault localization",
+        "program repair",
+        "reliability",
+        "regression testing"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Software Testing, Verification and Reliability",
+          "Empirical Software Engineering"
+        ],
+        "conferences": [
+          "ISSTA",
+          "ASE",
+          "ICST"
+        ]
+      },
+      "books": [
+        {
+          "title": "Introduction to Software Testing",
+          "authors": [
+            "Paul Ammann",
+            "Jeff Offutt"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "databases-and-data-management",
+      "name": "Databases & Data Management",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "data-information",
+        "computer-systems"
+      ],
+      "primary_domain_id": "data-information",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 67,
+        "machine_to_human": 48,
+        "confidence": "medium"
+      },
+      "summary": "Data models, query languages, transactions, indexing, storage, consistency, and efficient structured-data management.",
+      "representative_topics": [
+        "relational databases",
+        "transactions",
+        "query optimization",
+        "indexing",
+        "data models",
+        "consistency"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Database Systems",
+          "The VLDB Journal"
+        ],
+        "conferences": [
+          "SIGMOD",
+          "VLDB",
+          "PODS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Database System Concepts",
+          "authors": [
+            "Abraham Silberschatz",
+            "Henry F. Korth",
+            "S. Sudarshan"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "data-systems-and-engineering",
+      "name": "Data Systems & Engineering",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "data-information",
+        "computer-systems"
+      ],
+      "primary_domain_id": "data-information",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 74,
+        "machine_to_human": 52,
+        "confidence": "medium"
+      },
+      "summary": "Infrastructure for integrating, transporting, processing, monitoring, and governing batch and streaming data.",
+      "representative_topics": [
+        "data pipelines",
+        "stream processing",
+        "data integration",
+        "provenance",
+        "distributed processing",
+        "data quality"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Knowledge and Data Engineering",
+          "Distributed and Parallel Databases"
+        ],
+        "conferences": [
+          "ICDE",
+          "DEBS",
+          "SIGMOD"
+        ]
+      },
+      "books": [
+        {
+          "title": "Designing Data-Intensive Applications",
+          "authors": [
+            "Martin Kleppmann"
+          ],
+          "level": "practitioner",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "information-retrieval-and-search",
+      "name": "Information Retrieval & Search",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "data-information",
+        "artificial-intelligence"
+      ],
+      "primary_domain_id": "data-information",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 67,
+        "machine_to_human": 66,
+        "confidence": "medium"
+      },
+      "summary": "Indexing, ranking, recommendation, relevance, and evaluation for locating useful information in large collections.",
+      "representative_topics": [
+        "ranking",
+        "indexing",
+        "relevance",
+        "recommendation",
+        "retrieval evaluation",
+        "web search"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Information Systems",
+          "Information Processing & Management"
+        ],
+        "conferences": [
+          "SIGIR",
+          "WSDM",
+          "CIKM"
+        ]
+      },
+      "books": [
+        {
+          "title": "Introduction to Information Retrieval",
+          "authors": [
+            "Christopher D. Manning",
+            "Prabhakar Raghavan",
+            "Hinrich Schütze"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "data-mining-and-knowledge-discovery",
+      "name": "Data Mining & Knowledge Discovery",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "data-information",
+        "artificial-intelligence",
+        "math-stat-optimization"
+      ],
+      "primary_domain_id": "data-information",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 57,
+        "machine_to_human": 57,
+        "confidence": "medium"
+      },
+      "summary": "The extraction of patterns, structures, associations, anomalies, and useful knowledge from data.",
+      "representative_topics": [
+        "clustering",
+        "association rules",
+        "anomaly detection",
+        "graph mining",
+        "pattern discovery"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Knowledge Discovery from Data",
+          "Data Mining and Knowledge Discovery"
+        ],
+        "conferences": [
+          "KDD",
+          "ICDM",
+          "SDM"
+        ]
+      },
+      "books": [
+        {
+          "title": "Mining of Massive Datasets",
+          "authors": [
+            "Jure Leskovec",
+            "Anand Rajaraman",
+            "Jeffrey D. Ullman"
+          ],
+          "level": "intermediate",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "knowledge-graphs-and-semantic-data",
+      "name": "Knowledge Graphs & Semantic Data",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "data-information",
+        "artificial-intelligence"
+      ],
+      "primary_domain_id": "data-information",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 56,
+        "machine_to_human": 69,
+        "confidence": "medium"
+      },
+      "summary": "Structured representations of entities, relations, and semantics for integration, reasoning, querying, and discovery.",
+      "representative_topics": [
+        "knowledge graphs",
+        "ontologies",
+        "semantic web",
+        "graph querying",
+        "entity resolution",
+        "link prediction"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Semantic Web",
+          "Journal of Web Semantics"
+        ],
+        "conferences": [
+          "ISWC",
+          "ESWC"
+        ]
+      },
+      "books": [
+        {
+          "title": "Knowledge Graphs",
+          "authors": [
+            "Aidan Hogan et al."
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "search-planning-and-decision-making",
+      "name": "Search, Planning & Decision-Making",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "artificial-intelligence",
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "artificial-intelligence",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 42,
+        "machine_to_human": 55,
+        "confidence": "medium"
+      },
+      "summary": "Algorithms for exploring possibilities, constructing plans, and choosing actions under certainty or uncertainty.",
+      "representative_topics": [
+        "heuristic search",
+        "automated planning",
+        "Markov decision processes",
+        "constraint solving",
+        "sequential decisions"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Artificial Intelligence",
+          "Journal of Artificial Intelligence Research"
+        ],
+        "conferences": [
+          "AAAI",
+          "IJCAI",
+          "ICAPS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Automated Planning: Theory and Practice",
+          "authors": [
+            "Malik Ghallab",
+            "Dana Nau",
+            "Paolo Traverso"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "knowledge-representation-and-reasoning",
+      "name": "Knowledge Representation & Reasoning",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "artificial-intelligence",
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "artificial-intelligence",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 37,
+        "machine_to_human": 66,
+        "confidence": "medium"
+      },
+      "summary": "Formal representations of facts, concepts, rules, beliefs, and relations, together with methods for deriving conclusions.",
+      "representative_topics": [
+        "logic-based AI",
+        "ontologies",
+        "nonmonotonic reasoning",
+        "description logics",
+        "probabilistic reasoning"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Artificial Intelligence",
+          "Journal of Artificial Intelligence Research"
+        ],
+        "conferences": [
+          "KR",
+          "AAAI",
+          "IJCAI"
+        ]
+      },
+      "books": [
+        {
+          "title": "Knowledge Representation and Reasoning",
+          "authors": [
+            "Ronald J. Brachman",
+            "Hector J. Levesque"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "machine-learning",
+      "name": "Machine Learning",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "artificial-intelligence",
+        "math-stat-optimization"
+      ],
+      "primary_domain_id": "artificial-intelligence",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 51,
+        "machine_to_human": 58,
+        "confidence": "medium"
+      },
+      "summary": "Algorithms that improve predictions, representations, or decisions from data or experience.",
+      "representative_topics": [
+        "supervised learning",
+        "unsupervised learning",
+        "deep learning",
+        "reinforcement learning",
+        "generative models"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Journal of Machine Learning Research",
+          "Machine Learning"
+        ],
+        "conferences": [
+          "ICML",
+          "NeurIPS",
+          "AISTATS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Pattern Recognition and Machine Learning",
+          "authors": [
+            "Christopher M. Bishop"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "natural-language-and-speech",
+      "name": "Natural Language & Speech",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "artificial-intelligence",
+        "data-information"
+      ],
+      "primary_domain_id": "artificial-intelligence",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 57,
+        "machine_to_human": 79,
+        "confidence": "medium"
+      },
+      "summary": "Computational models of language, speech, meaning, dialogue, translation, retrieval, and generation.",
+      "representative_topics": [
+        "syntax",
+        "semantics",
+        "speech recognition",
+        "machine translation",
+        "information extraction",
+        "generation"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Computational Linguistics",
+          "Transactions of the Association for Computational Linguistics"
+        ],
+        "conferences": [
+          "ACL",
+          "EMNLP",
+          "NAACL"
+        ]
+      },
+      "books": [
+        {
+          "title": "Speech and Language Processing",
+          "authors": [
+            "Daniel Jurafsky",
+            "James H. Martin"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computer-vision-and-perception",
+      "name": "Computer Vision & Perception",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "artificial-intelligence",
+        "graphics-visualization-interaction"
+      ],
+      "primary_domain_id": "artificial-intelligence",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 68,
+        "machine_to_human": 70,
+        "confidence": "medium"
+      },
+      "summary": "Computational interpretation of images, video, geometry, scenes, and other sensory signals.",
+      "representative_topics": [
+        "image recognition",
+        "3D reconstruction",
+        "tracking",
+        "segmentation",
+        "vision-language models",
+        "scene understanding"
+      ],
+      "representative_venues": {
+        "journals": [
+          "International Journal of Computer Vision",
+          "IEEE Transactions on Pattern Analysis and Machine Intelligence"
+        ],
+        "conferences": [
+          "CVPR",
+          "ICCV",
+          "ECCV"
+        ]
+      },
+      "books": [
+        {
+          "title": "Computer Vision: Algorithms and Applications",
+          "authors": [
+            "Richard Szeliski"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "robotics-and-autonomous-systems",
+      "name": "Robotics & Autonomous Systems",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "artificial-intelligence",
+        "computer-systems"
+      ],
+      "primary_domain_id": "artificial-intelligence",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 84,
+        "machine_to_human": 65,
+        "confidence": "medium"
+      },
+      "summary": "Perception, estimation, planning, learning, control, and physical action in autonomous machines.",
+      "representative_topics": [
+        "localization",
+        "motion planning",
+        "control",
+        "manipulation",
+        "robot learning",
+        "human-robot interaction"
+      ],
+      "representative_venues": {
+        "journals": [
+          "The International Journal of Robotics Research",
+          "IEEE Transactions on Robotics"
+        ],
+        "conferences": [
+          "ICRA",
+          "IROS",
+          "RSS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Modern Robotics: Mechanics, Planning, and Control",
+          "authors": [
+            "Kevin M. Lynch",
+            "Frank C. Park"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "multiagent-systems",
+      "name": "Multiagent Systems",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "artificial-intelligence",
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "artificial-intelligence",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 43,
+        "machine_to_human": 74,
+        "confidence": "medium"
+      },
+      "summary": "Interacting computational agents that cooperate, compete, communicate, negotiate, and make distributed decisions.",
+      "representative_topics": [
+        "agent communication",
+        "coordination",
+        "negotiation",
+        "distributed decision-making",
+        "emergent behavior"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Autonomous Agents and Multi-Agent Systems"
+        ],
+        "conferences": [
+          "AAMAS",
+          "IJCAI"
+        ]
+      },
+      "books": [
+        {
+          "title": "Multiagent Systems: Algorithmic, Game-Theoretic, and Logical Foundations",
+          "authors": [
+            "Yoav Shoham",
+            "Kevin Leyton-Brown"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computer-graphics",
+      "name": "Computer Graphics",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "graphics-visualization-interaction",
+        "computer-systems"
+      ],
+      "primary_domain_id": "graphics-visualization-interaction",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 90,
+        "machine_to_human": 75,
+        "confidence": "medium"
+      },
+      "summary": "The representation, synthesis, simulation, animation, and rendering of visual and geometric content.",
+      "representative_topics": [
+        "rendering",
+        "geometry processing",
+        "animation",
+        "simulation",
+        "computational fabrication",
+        "GPU methods"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Graphics"
+        ],
+        "conferences": [
+          "SIGGRAPH",
+          "Eurographics"
+        ]
+      },
+      "books": [
+        {
+          "title": "Fundamentals of Computer Graphics",
+          "authors": [
+            "Steve Marschner",
+            "Peter Shirley"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "visualization",
+      "name": "Visualization",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "graphics-visualization-interaction",
+        "data-information"
+      ],
+      "primary_domain_id": "graphics-visualization-interaction",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 73,
+        "machine_to_human": 83,
+        "confidence": "medium"
+      },
+      "summary": "The visual representation of data and abstract information for exploration, analysis, explanation, and communication.",
+      "representative_topics": [
+        "visual encoding",
+        "interaction",
+        "visual analytics",
+        "scientific visualization",
+        "information visualization"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Visualization and Computer Graphics"
+        ],
+        "conferences": [
+          "IEEE VIS",
+          "EuroVis"
+        ]
+      },
+      "books": [
+        {
+          "title": "Visualization Analysis and Design",
+          "authors": [
+            "Tamara Munzner"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "human-computer-interaction",
+      "name": "Human-Computer Interaction",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "graphics-visualization-interaction"
+      ],
+      "primary_domain_id": "graphics-visualization-interaction",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 74,
+        "machine_to_human": 91,
+        "confidence": "medium"
+      },
+      "summary": "The design, use, and evaluation of interactive computing systems in human, organizational, and cultural contexts.",
+      "representative_topics": [
+        "interaction design",
+        "usability",
+        "user research",
+        "input techniques",
+        "ubiquitous computing"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Computer-Human Interaction",
+          "International Journal of Human-Computer Studies"
+        ],
+        "conferences": [
+          "CHI",
+          "UIST",
+          "CSCW"
+        ]
+      },
+      "books": [
+        {
+          "title": "Interaction Design: Beyond Human-Computer Interaction",
+          "authors": [
+            "Yvonne Rogers",
+            "Helen Sharp",
+            "Jenny Preece"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "accessibility-and-inclusive-computing",
+      "name": "Accessibility & Inclusive Computing",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "graphics-visualization-interaction",
+        "computing-society-education"
+      ],
+      "primary_domain_id": "graphics-visualization-interaction",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 70,
+        "machine_to_human": 97,
+        "confidence": "medium"
+      },
+      "summary": "Technologies and design methods that make computing usable across differing abilities, bodies, languages, and circumstances.",
+      "representative_topics": [
+        "assistive technology",
+        "inclusive design",
+        "screen readers",
+        "accessible interaction",
+        "disability studies"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Accessible Computing"
+        ],
+        "conferences": [
+          "ASSETS",
+          "CHI"
+        ]
+      },
+      "books": [
+        {
+          "title": "Ensuring Digital Accessibility through Process and Policy",
+          "authors": [
+            "Jonathan Lazar",
+            "Daniel F. Goldstein",
+            "Anne Taylor"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computer-supported-cooperative-work-and-social-computing",
+      "name": "Computer-Supported Cooperative Work & Social Computing",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "graphics-visualization-interaction",
+        "computing-society-education"
+      ],
+      "primary_domain_id": "graphics-visualization-interaction",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 59,
+        "machine_to_human": 91,
+        "confidence": "medium"
+      },
+      "summary": "Systems that mediate collaboration, communication, communities, platforms, and collective activity.",
+      "representative_topics": [
+        "collaborative systems",
+        "online communities",
+        "social media",
+        "groupware",
+        "platform governance"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Computer Supported Cooperative Work",
+          "Proceedings of the ACM on Human-Computer Interaction"
+        ],
+        "conferences": [
+          "CSCW",
+          "ICWSM"
+        ]
+      },
+      "books": [
+        {
+          "title": "Readings in Groupware and Computer-Supported Cooperative Work",
+          "authors": [
+            "Ronald M. Baecker"
+          ],
+          "level": "reference",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "games-and-interactive-media",
+      "name": "Games & Interactive Media",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "graphics-visualization-interaction",
+        "artificial-intelligence"
+      ],
+      "primary_domain_id": "graphics-visualization-interaction",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 88,
+        "machine_to_human": 88,
+        "confidence": "medium"
+      },
+      "summary": "Interactive entertainment and expressive systems, including engines, game AI, procedural content, and player experience.",
+      "representative_topics": [
+        "game engines",
+        "game AI",
+        "procedural generation",
+        "player modeling",
+        "interactive narrative"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Games",
+          "Games and Culture"
+        ],
+        "conferences": [
+          "AIIDE",
+          "FDG"
+        ]
+      },
+      "books": [
+        {
+          "title": "Game Engine Architecture",
+          "authors": [
+            "Jason Gregory"
+          ],
+          "level": "practitioner",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "virtual-augmented-and-mixed-reality",
+      "name": "Virtual, Augmented & Mixed Reality",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "graphics-visualization-interaction",
+        "computer-systems"
+      ],
+      "primary_domain_id": "graphics-visualization-interaction",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 94,
+        "machine_to_human": 94,
+        "confidence": "medium"
+      },
+      "summary": "Immersive and spatial computing involving displays, tracking, perception, simulation, and interaction.",
+      "representative_topics": [
+        "virtual reality",
+        "augmented reality",
+        "tracking",
+        "spatial interaction",
+        "haptics",
+        "presence"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Visualization and Computer Graphics",
+          "Presence: Virtual and Augmented Reality"
+        ],
+        "conferences": [
+          "IEEE VR",
+          "ISMAR"
+        ]
+      },
+      "books": [
+        {
+          "title": "Virtual Reality",
+          "authors": [
+            "Steven M. LaValle"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "systems-and-software-security",
+      "name": "Systems & Software Security",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "security-privacy",
+        "computer-systems",
+        "pl-software-engineering"
+      ],
+      "primary_domain_id": "security-privacy",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 71,
+        "machine_to_human": 36,
+        "confidence": "medium"
+      },
+      "summary": "Vulnerabilities, exploitation, malware, isolation, secure design, and defensive mechanisms in software systems.",
+      "representative_topics": [
+        "memory safety",
+        "malware",
+        "sandboxing",
+        "vulnerability analysis",
+        "secure systems"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Privacy and Security",
+          "IEEE Transactions on Dependable and Secure Computing"
+        ],
+        "conferences": [
+          "IEEE Symposium on Security and Privacy",
+          "USENIX Security",
+          "ACM CCS",
+          "NDSS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Security Engineering",
+          "authors": [
+            "Ross Anderson"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "network-security",
+      "name": "Network Security",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "security-privacy",
+        "computer-systems"
+      ],
+      "primary_domain_id": "security-privacy",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 79,
+        "machine_to_human": 40,
+        "confidence": "medium"
+      },
+      "summary": "Attacks and defenses involving communication protocols, distributed services, and network infrastructure.",
+      "representative_topics": [
+        "protocol security",
+        "intrusion detection",
+        "DDoS",
+        "routing security",
+        "traffic analysis"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Information Forensics and Security",
+          "IEEE Transactions on Network and Service Management"
+        ],
+        "conferences": [
+          "NDSS",
+          "USENIX Security",
+          "ACM CCS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Network Security: Private Communication in a Public World",
+          "authors": [
+            "Charlie Kaufman",
+            "Radia Perlman",
+            "Mike Speciner"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "hardware-security",
+      "name": "Hardware Security",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "security-privacy",
+        "computer-systems"
+      ],
+      "primary_domain_id": "security-privacy",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 87,
+        "machine_to_human": 30,
+        "confidence": "medium"
+      },
+      "summary": "Side channels, secure processors, trusted execution, physical attacks, supply chains, and hardware roots of trust.",
+      "representative_topics": [
+        "side channels",
+        "trusted execution",
+        "hardware Trojans",
+        "fault attacks",
+        "secure processors"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Information Forensics and Security",
+          "Journal of Cryptographic Engineering"
+        ],
+        "conferences": [
+          "HOST",
+          "CHES"
+        ]
+      },
+      "books": [
+        {
+          "title": "Introduction to Hardware Security and Trust",
+          "authors": [
+            "Mohammad Tehranipoor",
+            "Cliff Wang"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "applied-cryptography",
+      "name": "Applied Cryptography",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "security-privacy",
+        "theory-algorithms"
+      ],
+      "primary_domain_id": "security-privacy",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 57,
+        "machine_to_human": 36,
+        "confidence": "medium"
+      },
+      "summary": "The construction, implementation, deployment, and evaluation of cryptographic protocols in real systems.",
+      "representative_topics": [
+        "protocol design",
+        "key exchange",
+        "authentication",
+        "secure messaging",
+        "cryptographic engineering"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Journal of Cryptology",
+          "Journal of Cryptographic Engineering"
+        ],
+        "conferences": [
+          "CRYPTO",
+          "EUROCRYPT",
+          "Real World Crypto"
+        ]
+      },
+      "books": [
+        {
+          "title": "A Graduate Course in Applied Cryptography",
+          "authors": [
+            "Dan Boneh",
+            "Victor Shoup"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "privacy-enhancing-technologies",
+      "name": "Privacy-Enhancing Technologies",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "security-privacy",
+        "data-information"
+      ],
+      "primary_domain_id": "security-privacy",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 57,
+        "machine_to_human": 48,
+        "confidence": "medium"
+      },
+      "summary": "Technical methods that enable useful computation while limiting disclosure of sensitive information.",
+      "representative_topics": [
+        "differential privacy",
+        "secure computation",
+        "anonymous communication",
+        "privacy engineering",
+        "federated analytics"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Journal of Privacy and Confidentiality"
+        ],
+        "conferences": [
+          "Privacy Enhancing Technologies Symposium",
+          "ACM CCS"
+        ]
+      },
+      "books": [
+        {
+          "title": "The Algorithmic Foundations of Differential Privacy",
+          "authors": [
+            "Cynthia Dwork",
+            "Aaron Roth"
+          ],
+          "level": "advanced",
+          "coverage_note": "Covers differential privacy rather than the full PET landscape."
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "usable-security-and-privacy",
+      "name": "Usable Security & Privacy",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "security-privacy",
+        "graphics-visualization-interaction"
+      ],
+      "primary_domain_id": "security-privacy",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 64,
+        "machine_to_human": 76,
+        "confidence": "medium"
+      },
+      "summary": "How security and privacy mechanisms interact with human behavior, understanding, incentives, and decisions.",
+      "representative_topics": [
+        "authentication usability",
+        "security warnings",
+        "privacy controls",
+        "phishing",
+        "mental models"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Privacy and Security",
+          "ACM Transactions on Computer-Human Interaction"
+        ],
+        "conferences": [
+          "SOUPS",
+          "CHI"
+        ]
+      },
+      "books": [
+        {
+          "title": "Security and Usability",
+          "authors": [
+            "Lorrie Faith Cranor",
+            "Simson Garfinkel"
+          ],
+          "level": "reference",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "digital-forensics",
+      "name": "Digital Forensics",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "security-privacy"
+      ],
+      "primary_domain_id": "security-privacy",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 82,
+        "machine_to_human": 57,
+        "confidence": "medium"
+      },
+      "summary": "The acquisition, preservation, reconstruction, analysis, and interpretation of digital evidence.",
+      "representative_topics": [
+        "disk forensics",
+        "memory forensics",
+        "mobile forensics",
+        "incident reconstruction",
+        "evidence preservation"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Forensic Science International: Digital Investigation"
+        ],
+        "conferences": [
+          "DFRWS"
+        ]
+      },
+      "books": [
+        {
+          "title": "Digital Evidence and Computer Crime",
+          "authors": [
+            "Eoghan Casey"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "numerical-and-scientific-computing",
+      "name": "Numerical & Scientific Computing",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "interdisciplinary-computing",
+        "math-stat-optimization",
+        "computer-systems"
+      ],
+      "primary_domain_id": "interdisciplinary-computing",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 67,
+        "machine_to_human": 61,
+        "confidence": "medium"
+      },
+      "summary": "Simulation, numerical models, scientific software, and high-performance computation for scientific discovery.",
+      "representative_topics": [
+        "simulation",
+        "numerical PDEs",
+        "high-performance computing",
+        "scientific software",
+        "computational modeling"
+      ],
+      "representative_venues": {
+        "journals": [
+          "SIAM Journal on Scientific Computing",
+          "Journal of Computational Physics"
+        ],
+        "conferences": [
+          "SC",
+          "SIAM CSE"
+        ]
+      },
+      "books": [
+        {
+          "title": "Scientific Computing: An Introductory Survey",
+          "authors": [
+            "Michael T. Heath"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computational-biology-and-bioinformatics",
+      "name": "Computational Biology & Bioinformatics",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "interdisciplinary-computing",
+        "data-information",
+        "artificial-intelligence"
+      ],
+      "primary_domain_id": "interdisciplinary-computing",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 61,
+        "machine_to_human": 76,
+        "confidence": "medium"
+      },
+      "summary": "Computational study of biological sequences, structures, evolution, molecular systems, genomics, and biological data.",
+      "representative_topics": [
+        "sequence analysis",
+        "genomics",
+        "phylogenetics",
+        "structural bioinformatics",
+        "systems biology"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Bioinformatics",
+          "PLOS Computational Biology"
+        ],
+        "conferences": [
+          "RECOMB",
+          "ISMB"
+        ]
+      },
+      "books": [
+        {
+          "title": "An Introduction to Bioinformatics Algorithms",
+          "authors": [
+            "Neil C. Jones",
+            "Pavel A. Pevzner"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "health-informatics-and-computational-medicine",
+      "name": "Health Informatics & Computational Medicine",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "interdisciplinary-computing",
+        "data-information",
+        "artificial-intelligence"
+      ],
+      "primary_domain_id": "interdisciplinary-computing",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 73,
+        "machine_to_human": 83,
+        "confidence": "medium"
+      },
+      "summary": "Clinical information, medical data, decision support, biomedical modeling, diagnosis, treatment, and healthcare systems.",
+      "representative_topics": [
+        "electronic health records",
+        "clinical decision support",
+        "medical imaging",
+        "biomedical data",
+        "computational diagnosis"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Journal of the American Medical Informatics Association",
+          "Journal of Biomedical Informatics"
+        ],
+        "conferences": [
+          "AMIA Annual Symposium",
+          "MEDINFO"
+        ]
+      },
+      "books": [
+        {
+          "title": "Biomedical Informatics",
+          "authors": [
+            "Edward H. Shortliffe",
+            "James J. Cimino"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computational-social-science",
+      "name": "Computational Social Science",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "interdisciplinary-computing",
+        "computing-society-education",
+        "data-information"
+      ],
+      "primary_domain_id": "interdisciplinary-computing",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 49,
+        "machine_to_human": 86,
+        "confidence": "medium"
+      },
+      "summary": "The computational study of social behavior, networks, institutions, communication, and collective phenomena.",
+      "representative_topics": [
+        "social networks",
+        "online behavior",
+        "collective action",
+        "computational experiments",
+        "social simulation"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Journal of Computational Social Science",
+          "Big Data & Society"
+        ],
+        "conferences": [
+          "ICWSM",
+          "WebSci"
+        ]
+      },
+      "books": [
+        {
+          "title": "Bit by Bit: Social Research in the Digital Age",
+          "authors": [
+            "Matthew J. Salganik"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "digital-humanities",
+      "name": "Digital Humanities",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "interdisciplinary-computing",
+        "data-information",
+        "graphics-visualization-interaction"
+      ],
+      "primary_domain_id": "interdisciplinary-computing",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 55,
+        "machine_to_human": 94,
+        "confidence": "medium"
+      },
+      "summary": "Computational approaches to literature, history, archives, language, art, and cultural artifacts.",
+      "representative_topics": [
+        "text analysis",
+        "digital archives",
+        "cultural analytics",
+        "scholarly editions",
+        "historical GIS"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Digital Scholarship in the Humanities",
+          "Digital Humanities Quarterly"
+        ],
+        "conferences": [
+          "Digital Humanities Conference"
+        ]
+      },
+      "books": [
+        {
+          "title": "Digital_Humanities",
+          "authors": [
+            "Anne Burdick",
+            "Johanna Drucker",
+            "Peter Lunenfeld",
+            "Todd Presner",
+            "Jeffrey Schnapp"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "geospatial-and-urban-computing",
+      "name": "Geospatial & Urban Computing",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "interdisciplinary-computing",
+        "data-information",
+        "computer-systems"
+      ],
+      "primary_domain_id": "interdisciplinary-computing",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 82,
+        "machine_to_human": 78,
+        "confidence": "medium"
+      },
+      "summary": "Spatial data, geographic systems, mobility, transportation, remote sensing, cities, and urban infrastructure.",
+      "representative_topics": [
+        "GIS",
+        "spatial databases",
+        "mobility analysis",
+        "transportation",
+        "remote sensing",
+        "urban sensing"
+      ],
+      "representative_venues": {
+        "journals": [
+          "International Journal of Geographical Information Science",
+          "Computers, Environment and Urban Systems"
+        ],
+        "conferences": [
+          "ACM SIGSPATIAL",
+          "GIScience"
+        ]
+      },
+      "books": [
+        {
+          "title": "Geographic Information Analysis",
+          "authors": [
+            "David O'Sullivan",
+            "David J. Unwin"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computational-sustainability",
+      "name": "Computational Sustainability",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "interdisciplinary-computing",
+        "math-stat-optimization",
+        "artificial-intelligence",
+        "computing-society-education"
+      ],
+      "primary_domain_id": "interdisciplinary-computing",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 63,
+        "machine_to_human": 91,
+        "confidence": "medium"
+      },
+      "summary": "Computational methods for conservation, climate, energy, agriculture, resource allocation, and environmental decisions.",
+      "representative_topics": [
+        "conservation planning",
+        "energy systems",
+        "climate modeling",
+        "resource allocation",
+        "environmental monitoring"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Environmental Modelling & Software",
+          "Sustainable Computing: Informatics and Systems"
+        ],
+        "conferences": [
+          "ACM e-Energy",
+          "AAAI"
+        ]
+      },
+      "books": [],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "ethics-fairness-and-accountability",
+      "name": "Ethics, Fairness & Accountability",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "computing-society-education",
+        "artificial-intelligence"
+      ],
+      "primary_domain_id": "computing-society-education",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 37,
+        "machine_to_human": 96,
+        "confidence": "medium"
+      },
+      "summary": "Normative analysis of computational systems, including discrimination, transparency, responsibility, power, and evaluation.",
+      "representative_topics": [
+        "algorithmic fairness",
+        "accountability",
+        "transparency",
+        "responsibility",
+        "value-sensitive design"
+      ],
+      "representative_venues": {
+        "journals": [
+          "AI and Ethics",
+          "Big Data & Society"
+        ],
+        "conferences": [
+          "ACM FAccT",
+          "AIES"
+        ]
+      },
+      "books": [
+        {
+          "title": "The Ethics of Information",
+          "authors": [
+            "Luciano Floridi"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 1,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computing-law-policy-and-governance",
+      "name": "Computing Law, Policy & Governance",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "computing-society-education",
+        "security-privacy"
+      ],
+      "primary_domain_id": "computing-society-education",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 49,
+        "machine_to_human": 96,
+        "confidence": "medium"
+      },
+      "summary": "Regulation, intellectual property, platform governance, competition, privacy law, cybersecurity policy, and institutions.",
+      "representative_topics": [
+        "privacy law",
+        "platform governance",
+        "intellectual property",
+        "cybersecurity policy",
+        "competition policy"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Computer Law & Security Review",
+          "Harvard Journal of Law & Technology"
+        ],
+        "conferences": [
+          "TPRC",
+          "CPDP"
+        ]
+      },
+      "books": [
+        {
+          "title": "Internet Law: Cases and Problems",
+          "authors": [
+            "James Grimmelmann"
+          ],
+          "level": "advanced",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "social-impacts-of-computing",
+      "name": "Social Impacts of Computing",
+      "kind": "field",
+      "node_class": "ordinary_field",
+      "ordinary_child": true,
+      "domain_ids": [
+        "computing-society-education"
+      ],
+      "primary_domain_id": "computing-society-education",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 56,
+        "machine_to_human": 99,
+        "confidence": "medium"
+      },
+      "summary": "The effects of computing on work, communities, politics, culture, inequality, institutions, and everyday life.",
+      "representative_topics": [
+        "automation and labor",
+        "platform society",
+        "surveillance",
+        "digital inequality",
+        "political communication"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Information, Communication & Society",
+          "New Media & Society"
+        ],
+        "conferences": [
+          "CSCW",
+          "ICWSM"
+        ]
+      },
+      "books": [
+        {
+          "title": "Technology and Society: Building Our Sociotechnical Future",
+          "authors": [
+            "Deborah G. Johnson",
+            "Jameson M. Wetmore"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computer-science-education",
+      "name": "Computer Science Education",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "computing-society-education",
+        "graphics-visualization-interaction"
+      ],
+      "primary_domain_id": "computing-society-education",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 65,
+        "machine_to_human": 97,
+        "confidence": "medium"
+      },
+      "summary": "The teaching and learning of computing, including curriculum, assessment, misconceptions, participation, and educational tools.",
+      "representative_topics": [
+        "computing pedagogy",
+        "curriculum",
+        "assessment",
+        "student misconceptions",
+        "broadening participation"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Computing Education"
+        ],
+        "conferences": [
+          "SIGCSE Technical Symposium",
+          "ICER"
+        ]
+      },
+      "books": [
+        {
+          "title": "The Cambridge Handbook of Computing Education Research",
+          "authors": [
+            "Sally A. Fincher",
+            "Anthony V. Robins"
+          ],
+          "level": "reference",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "computing-profession-and-practice",
+      "name": "Computing Profession & Practice",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "computing-society-education",
+        "pl-software-engineering"
+      ],
+      "primary_domain_id": "computing-society-education",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 58,
+        "machine_to_human": 89,
+        "confidence": "medium"
+      },
+      "summary": "Professional responsibility, research and engineering practice, standards, organizations, and professional obligations.",
+      "representative_topics": [
+        "professional ethics",
+        "standards",
+        "workplace practice",
+        "research integrity",
+        "engineering responsibility"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Software",
+          "Communications of the ACM"
+        ],
+        "conferences": [
+          "ICSE-SEIP"
+        ]
+      },
+      "books": [
+        {
+          "title": "The Mythical Man-Month",
+          "authors": [
+            "Frederick P. Brooks Jr."
+          ],
+          "level": "introductory",
+          "coverage_note": "Classic perspective on professional software projects, not a complete survey."
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    },
+    {
+      "id": "sustainable-computing-and-environmental-impact",
+      "name": "Sustainable Computing & Environmental Impact",
+      "kind": "field",
+      "node_class": "bridge_field",
+      "ordinary_child": false,
+      "domain_ids": [
+        "computing-society-education",
+        "computer-systems"
+      ],
+      "primary_domain_id": "computing-society-education",
+      "aliases": [],
+      "position": {
+        "abstract_to_concrete": 75,
+        "machine_to_human": 90,
+        "confidence": "medium"
+      },
+      "summary": "The energy, carbon, water, material, and lifecycle costs of computing infrastructure, devices, software, and AI.",
+      "representative_topics": [
+        "energy-efficient computing",
+        "carbon accounting",
+        "hardware lifecycle",
+        "e-waste",
+        "water use",
+        "sustainable software"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Sustainable Computing: Informatics and Systems"
+        ],
+        "conferences": [
+          "ACM e-Energy",
+          "ICT4S"
+        ]
+      },
+      "books": [
+        {
+          "title": "Green IT: Principles and Practices",
+          "authors": [
+            "San Murugesan",
+            "G. R. Gangadharan"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "priority": 2,
+        "default_label_visibility": "medium_zoom",
+        "show_edges": "on_hover_or_selection"
+      }
+    }
+  ],
+  "constellations": [
+    {
+      "id": "data-science",
+      "name": "Data Science",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "cross_cutting_umbrella",
+      "domain_ids": [
+        "math-stat-optimization",
+        "data-information",
+        "artificial-intelligence",
+        "graphics-visualization-interaction"
+      ],
+      "component_field_ids": [
+        "probability-and-statistics",
+        "databases-and-data-management",
+        "data-systems-and-engineering",
+        "machine-learning",
+        "visualization"
+      ],
+      "position": {
+        "abstract_to_concrete": 61,
+        "machine_to_human": 69,
+        "confidence": "low"
+      },
+      "summary": "A cross-cutting practice combining statistics, data management, engineering, machine learning, visualization, and domain expertise.",
+      "why_not_ordinary_child": "It is not contained by one research domain and overlaps several established communities.",
+      "representative_topics": [
+        "data lifecycle",
+        "exploratory analysis",
+        "predictive modeling",
+        "visual communication",
+        "domain inference"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Harvard Data Science Review"
+        ],
+        "conferences": [
+          "KDD"
+        ]
+      },
+      "books": [
+        {
+          "title": "The Art of Data Science",
+          "authors": [
+            "Roger D. Peng",
+            "Elizabeth Matsui"
+          ],
+          "level": "introductory",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "neuro-symbolic-ai",
+      "name": "Neuro-Symbolic AI",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "hybrid_methodology",
+      "domain_ids": [
+        "artificial-intelligence",
+        "theory-algorithms"
+      ],
+      "component_field_ids": [
+        "machine-learning",
+        "knowledge-representation-and-reasoning",
+        "program-analysis-verification-and-synthesis"
+      ],
+      "position": {
+        "abstract_to_concrete": 43,
+        "machine_to_human": 64,
+        "confidence": "low"
+      },
+      "summary": "Approaches that combine learned representations with symbolic structure, logic, constraints, or explicit reasoning.",
+      "why_not_ordinary_child": "Its identity is the bridge between machine learning and symbolic reasoning, not membership under one parent.",
+      "representative_topics": [
+        "differentiable reasoning",
+        "logic-guided learning",
+        "symbolic abstraction",
+        "constraint-aware learning"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Artificial Intelligence"
+        ],
+        "conferences": [
+          "AAAI",
+          "IJCAI",
+          "NeurIPS"
+        ]
+      },
+      "books": [],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "embodied-ai",
+      "name": "Embodied AI",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "cross_domain_theme",
+      "domain_ids": [
+        "artificial-intelligence",
+        "computer-systems",
+        "graphics-visualization-interaction"
+      ],
+      "component_field_ids": [
+        "robotics-and-autonomous-systems",
+        "computer-vision-and-perception",
+        "machine-learning",
+        "embedded-real-time-and-cyber-physical-systems"
+      ],
+      "position": {
+        "abstract_to_concrete": 82,
+        "machine_to_human": 69,
+        "confidence": "low"
+      },
+      "summary": "Intelligence developed and evaluated through perception and action in physical or simulated environments.",
+      "why_not_ordinary_child": "It spans robotics, perception, learning, simulation, and hardware rather than forming a clean child of AI.",
+      "representative_topics": [
+        "sensorimotor learning",
+        "navigation",
+        "manipulation",
+        "simulation-to-reality",
+        "world models"
+      ],
+      "representative_venues": {
+        "journals": [
+          "The International Journal of Robotics Research"
+        ],
+        "conferences": [
+          "CoRL",
+          "RSS",
+          "ICRA"
+        ]
+      },
+      "books": [],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "human-ai-interaction",
+      "name": "Human–AI Interaction",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "cross_domain_theme",
+      "domain_ids": [
+        "artificial-intelligence",
+        "graphics-visualization-interaction",
+        "computing-society-education"
+      ],
+      "component_field_ids": [
+        "human-computer-interaction",
+        "machine-learning",
+        "ethics-fairness-and-accountability"
+      ],
+      "position": {
+        "abstract_to_concrete": 66,
+        "machine_to_human": 92,
+        "confidence": "low"
+      },
+      "summary": "The design and study of interaction, collaboration, explanation, control, and reliance between people and AI systems.",
+      "why_not_ordinary_child": "It requires both AI-system behavior and human-centered evaluation, with ethical and institutional dimensions.",
+      "representative_topics": [
+        "explainability",
+        "mixed-initiative systems",
+        "human oversight",
+        "calibrated trust",
+        "AI-assisted work"
+      ],
+      "representative_venues": {
+        "journals": [
+          "ACM Transactions on Interactive Intelligent Systems"
+        ],
+        "conferences": [
+          "CHI",
+          "IUI",
+          "FAccT"
+        ]
+      },
+      "books": [],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "trustworthy-ai",
+      "name": "Trustworthy AI",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "cross_domain_umbrella",
+      "domain_ids": [
+        "artificial-intelligence",
+        "security-privacy",
+        "computing-society-education",
+        "pl-software-engineering"
+      ],
+      "component_field_ids": [
+        "machine-learning",
+        "ethics-fairness-and-accountability",
+        "systems-and-software-security",
+        "program-analysis-verification-and-synthesis",
+        "usable-security-and-privacy"
+      ],
+      "position": {
+        "abstract_to_concrete": 53,
+        "machine_to_human": 83,
+        "confidence": "low"
+      },
+      "summary": "An umbrella for reliability, robustness, safety, security, privacy, fairness, accountability, and human control in AI.",
+      "why_not_ordinary_child": "Trustworthiness is a collection of desired properties studied by several communities, not one coherent child field.",
+      "representative_topics": [
+        "robustness",
+        "AI safety",
+        "fairness",
+        "privacy",
+        "verification",
+        "human oversight"
+      ],
+      "representative_venues": {
+        "journals": [
+          "AI and Ethics"
+        ],
+        "conferences": [
+          "FAccT",
+          "AIES",
+          "NeurIPS"
+        ]
+      },
+      "books": [],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "multimodal-learning",
+      "name": "Multimodal Learning",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "hybrid_methodology",
+      "domain_ids": [
+        "artificial-intelligence"
+      ],
+      "component_field_ids": [
+        "machine-learning",
+        "natural-language-and-speech",
+        "computer-vision-and-perception"
+      ],
+      "position": {
+        "abstract_to_concrete": 62,
+        "machine_to_human": 74,
+        "confidence": "low"
+      },
+      "summary": "Learning systems that integrate information from language, vision, audio, and other modalities.",
+      "why_not_ordinary_child": "It combines established perception and language fields through shared learning methods.",
+      "representative_topics": [
+        "vision-language models",
+        "audio-visual learning",
+        "cross-modal retrieval",
+        "multimodal generation"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Pattern Analysis and Machine Intelligence"
+        ],
+        "conferences": [
+          "NeurIPS",
+          "CVPR",
+          "ACL"
+        ]
+      },
+      "books": [],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "ai-for-science",
+      "name": "AI for Science",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "application_umbrella",
+      "domain_ids": [
+        "artificial-intelligence",
+        "interdisciplinary-computing",
+        "math-stat-optimization"
+      ],
+      "component_field_ids": [
+        "machine-learning",
+        "numerical-and-scientific-computing",
+        "computational-biology-and-bioinformatics",
+        "optimization"
+      ],
+      "position": {
+        "abstract_to_concrete": 60,
+        "machine_to_human": 70,
+        "confidence": "low"
+      },
+      "summary": "The use and adaptation of AI for scientific modeling, simulation, experiment design, and discovery.",
+      "why_not_ordinary_child": "Its methods and evaluation depend simultaneously on AI and domain-specific scientific practice.",
+      "representative_topics": [
+        "surrogate modeling",
+        "scientific foundation models",
+        "automated discovery",
+        "experiment design",
+        "physics-informed learning"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Nature Machine Intelligence"
+        ],
+        "conferences": [
+          "NeurIPS",
+          "ICML"
+        ]
+      },
+      "books": [],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "internet-of-things",
+      "name": "Internet of Things",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "systems_ecosystem",
+      "domain_ids": [
+        "computer-systems",
+        "security-privacy",
+        "data-information",
+        "graphics-visualization-interaction"
+      ],
+      "component_field_ids": [
+        "embedded-real-time-and-cyber-physical-systems",
+        "networking-and-communication",
+        "systems-and-software-security",
+        "data-systems-and-engineering",
+        "human-computer-interaction"
+      ],
+      "position": {
+        "abstract_to_concrete": 91,
+        "machine_to_human": 58,
+        "confidence": "low"
+      },
+      "summary": "Networked sensing and actuation ecosystems built from embedded devices, communication, data services, security, and interaction.",
+      "why_not_ordinary_child": "IoT is an ecosystem assembled from several systems and application fields rather than a single foundational community.",
+      "representative_topics": [
+        "sensor networks",
+        "edge computing",
+        "device management",
+        "smart environments",
+        "IoT security"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Internet of Things Journal"
+        ],
+        "conferences": [
+          "SenSys",
+          "IPSN"
+        ]
+      },
+      "books": [],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "developer-tools",
+      "name": "Developer Tools",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "practice_ecosystem",
+      "domain_ids": [
+        "pl-software-engineering",
+        "graphics-visualization-interaction",
+        "artificial-intelligence"
+      ],
+      "component_field_ids": [
+        "software-engineering",
+        "program-analysis-verification-and-synthesis",
+        "human-computer-interaction",
+        "machine-learning"
+      ],
+      "position": {
+        "abstract_to_concrete": 61,
+        "machine_to_human": 67,
+        "confidence": "low"
+      },
+      "summary": "Interactive tools that help people understand, write, test, debug, transform, and maintain software.",
+      "why_not_ordinary_child": "Developer tools combine software engineering, program analysis, HCI, and increasingly AI.",
+      "representative_topics": [
+        "IDEs",
+        "debuggers",
+        "code search",
+        "program comprehension",
+        "AI coding assistants",
+        "refactoring"
+      ],
+      "representative_venues": {
+        "journals": [
+          "IEEE Transactions on Software Engineering"
+        ],
+        "conferences": [
+          "ICSE",
+          "ASE",
+          "CHI"
+        ]
+      },
+      "books": [],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "privacy-preserving-machine-learning",
+      "name": "Privacy-Preserving Machine Learning",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "cross_domain_theme",
+      "domain_ids": [
+        "security-privacy",
+        "artificial-intelligence",
+        "theory-algorithms"
+      ],
+      "component_field_ids": [
+        "privacy-enhancing-technologies",
+        "machine-learning",
+        "cryptography",
+        "computational-learning-theory"
+      ],
+      "position": {
+        "abstract_to_concrete": 45,
+        "machine_to_human": 61,
+        "confidence": "low"
+      },
+      "summary": "Learning and inference under formal privacy, cryptographic, distributed, or disclosure constraints.",
+      "why_not_ordinary_child": "It applies privacy and cryptographic guarantees to learning systems, so neither security nor AI alone contains it.",
+      "representative_topics": [
+        "differentially private learning",
+        "federated learning",
+        "secure aggregation",
+        "encrypted inference",
+        "privacy accounting"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Journal of Privacy and Confidentiality"
+        ],
+        "conferences": [
+          "PETS",
+          "NeurIPS",
+          "ICML"
+        ]
+      },
+      "books": [],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    },
+    {
+      "id": "computational-social-choice",
+      "name": "Computational Social Choice",
+      "kind": "constellation",
+      "ordinary_child": false,
+      "constellation_type": "cross_domain_field",
+      "domain_ids": [
+        "theory-algorithms",
+        "computing-society-education",
+        "interdisciplinary-computing"
+      ],
+      "component_field_ids": [
+        "algorithmic-economics-and-game-theory",
+        "computational-social-science",
+        "computing-law-policy-and-governance"
+      ],
+      "position": {
+        "abstract_to_concrete": 31,
+        "machine_to_human": 83,
+        "confidence": "low"
+      },
+      "summary": "Computational and axiomatic analysis of voting, collective decisions, preference aggregation, and fair allocation.",
+      "why_not_ordinary_child": "It bridges algorithmic game theory, political institutions, and computational social analysis.",
+      "representative_topics": [
+        "voting rules",
+        "fair division",
+        "preference aggregation",
+        "participatory budgeting",
+        "liquid democracy"
+      ],
+      "representative_venues": {
+        "journals": [
+          "Social Choice and Welfare"
+        ],
+        "conferences": [
+          "AAMAS",
+          "EC"
+        ]
+      },
+      "books": [
+        {
+          "title": "Handbook of Computational Social Choice",
+          "authors": [
+            "Felix Brandt",
+            "Vincent Conitzer",
+            "Ulle Endriss",
+            "Jérôme Lang",
+            "Ariel D. Procaccia"
+          ],
+          "level": "reference",
+          "coverage_note": ""
+        }
+      ],
+      "display": {
+        "default_visibility": "hidden",
+        "reveal_on": [
+          "search",
+          "component_focus",
+          "constellations_filter"
+        ],
+        "marker": "outlined_bridge_star"
+      }
+    }
+  ],
+  "relations": [
+    {
+      "source": "automata-formal-languages-and-computability",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computational-complexity",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "algorithms-and-data-structures",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "cryptography",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "cryptography",
+      "target": "security-privacy",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "quantum-computing-and-information",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "quantum-computing-and-information",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computational-learning-theory",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computational-learning-theory",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computational-learning-theory",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "algorithmic-economics-and-game-theory",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "algorithmic-economics-and-game-theory",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "discrete-mathematics-and-logic",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "probability-and-statistics",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "optimization",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "optimization",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "information-theory-and-coding",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "information-theory-and-coding",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "information-theory-and-coding",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "numerical-analysis",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computer-architecture-and-organization",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "operating-systems",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "networking-and-communication",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "parallel-and-distributed-systems",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "parallel-and-distributed-systems",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "storage-systems",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "storage-systems",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "cloud-and-datacenter-systems",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "embedded-real-time-and-cyber-physical-systems",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "programming-languages-and-semantics",
+      "target": "pl-software-engineering",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "programming-languages-and-semantics",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "compilers-and-runtime-systems",
+      "target": "pl-software-engineering",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "compilers-and-runtime-systems",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "program-analysis-verification-and-synthesis",
+      "target": "pl-software-engineering",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "program-analysis-verification-and-synthesis",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "software-engineering",
+      "target": "pl-software-engineering",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "software-testing-reliability-and-maintenance",
+      "target": "pl-software-engineering",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "databases-and-data-management",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "databases-and-data-management",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "data-systems-and-engineering",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "data-systems-and-engineering",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "information-retrieval-and-search",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "information-retrieval-and-search",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "data-mining-and-knowledge-discovery",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "data-mining-and-knowledge-discovery",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "data-mining-and-knowledge-discovery",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "knowledge-graphs-and-semantic-data",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "knowledge-graphs-and-semantic-data",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "search-planning-and-decision-making",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "search-planning-and-decision-making",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "knowledge-representation-and-reasoning",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "knowledge-representation-and-reasoning",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "machine-learning",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "machine-learning",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "natural-language-and-speech",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "natural-language-and-speech",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computer-vision-and-perception",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computer-vision-and-perception",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "robotics-and-autonomous-systems",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "robotics-and-autonomous-systems",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "multiagent-systems",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "multiagent-systems",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computer-graphics",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computer-graphics",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "visualization",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "visualization",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "human-computer-interaction",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "accessibility-and-inclusive-computing",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "accessibility-and-inclusive-computing",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computer-supported-cooperative-work-and-social-computing",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computer-supported-cooperative-work-and-social-computing",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "games-and-interactive-media",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "games-and-interactive-media",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "virtual-augmented-and-mixed-reality",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "virtual-augmented-and-mixed-reality",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "systems-and-software-security",
+      "target": "security-privacy",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "systems-and-software-security",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "systems-and-software-security",
+      "target": "pl-software-engineering",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "network-security",
+      "target": "security-privacy",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "network-security",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "hardware-security",
+      "target": "security-privacy",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "hardware-security",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "applied-cryptography",
+      "target": "security-privacy",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "applied-cryptography",
+      "target": "theory-algorithms",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "privacy-enhancing-technologies",
+      "target": "security-privacy",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "privacy-enhancing-technologies",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "usable-security-and-privacy",
+      "target": "security-privacy",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "usable-security-and-privacy",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "digital-forensics",
+      "target": "security-privacy",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "numerical-and-scientific-computing",
+      "target": "interdisciplinary-computing",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "numerical-and-scientific-computing",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "numerical-and-scientific-computing",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computational-biology-and-bioinformatics",
+      "target": "interdisciplinary-computing",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computational-biology-and-bioinformatics",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computational-biology-and-bioinformatics",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "health-informatics-and-computational-medicine",
+      "target": "interdisciplinary-computing",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "health-informatics-and-computational-medicine",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "health-informatics-and-computational-medicine",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computational-social-science",
+      "target": "interdisciplinary-computing",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computational-social-science",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computational-social-science",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "digital-humanities",
+      "target": "interdisciplinary-computing",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "digital-humanities",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "digital-humanities",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "geospatial-and-urban-computing",
+      "target": "interdisciplinary-computing",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "geospatial-and-urban-computing",
+      "target": "data-information",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "geospatial-and-urban-computing",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computational-sustainability",
+      "target": "interdisciplinary-computing",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computational-sustainability",
+      "target": "math-stat-optimization",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computational-sustainability",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computational-sustainability",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "ethics-fairness-and-accountability",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "ethics-fairness-and-accountability",
+      "target": "artificial-intelligence",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computing-law-policy-and-governance",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computing-law-policy-and-governance",
+      "target": "security-privacy",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "social-impacts-of-computing",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computer-science-education",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computer-science-education",
+      "target": "graphics-visualization-interaction",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "computing-profession-and-practice",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "computing-profession-and-practice",
+      "target": "pl-software-engineering",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "sustainable-computing-and-environmental-impact",
+      "target": "computing-society-education",
+      "type": "part_of",
+      "strength": 1.0
+    },
+    {
+      "source": "sustainable-computing-and-environmental-impact",
+      "target": "computer-systems",
+      "type": "part_of",
+      "strength": 0.7
+    },
+    {
+      "source": "data-science",
+      "target": "probability-and-statistics",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "data-science",
+      "target": "databases-and-data-management",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "data-science",
+      "target": "data-systems-and-engineering",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "data-science",
+      "target": "machine-learning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "data-science",
+      "target": "visualization",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "neuro-symbolic-ai",
+      "target": "machine-learning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "neuro-symbolic-ai",
+      "target": "knowledge-representation-and-reasoning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "neuro-symbolic-ai",
+      "target": "program-analysis-verification-and-synthesis",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "embodied-ai",
+      "target": "robotics-and-autonomous-systems",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "embodied-ai",
+      "target": "computer-vision-and-perception",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "embodied-ai",
+      "target": "machine-learning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "embodied-ai",
+      "target": "embedded-real-time-and-cyber-physical-systems",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "human-ai-interaction",
+      "target": "human-computer-interaction",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "human-ai-interaction",
+      "target": "machine-learning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "human-ai-interaction",
+      "target": "ethics-fairness-and-accountability",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "trustworthy-ai",
+      "target": "machine-learning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "trustworthy-ai",
+      "target": "ethics-fairness-and-accountability",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "trustworthy-ai",
+      "target": "systems-and-software-security",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "trustworthy-ai",
+      "target": "program-analysis-verification-and-synthesis",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "trustworthy-ai",
+      "target": "usable-security-and-privacy",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "multimodal-learning",
+      "target": "machine-learning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "multimodal-learning",
+      "target": "natural-language-and-speech",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "multimodal-learning",
+      "target": "computer-vision-and-perception",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "ai-for-science",
+      "target": "machine-learning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "ai-for-science",
+      "target": "numerical-and-scientific-computing",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "ai-for-science",
+      "target": "computational-biology-and-bioinformatics",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "ai-for-science",
+      "target": "optimization",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "internet-of-things",
+      "target": "embedded-real-time-and-cyber-physical-systems",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "internet-of-things",
+      "target": "networking-and-communication",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "internet-of-things",
+      "target": "systems-and-software-security",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "internet-of-things",
+      "target": "data-systems-and-engineering",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "internet-of-things",
+      "target": "human-computer-interaction",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "developer-tools",
+      "target": "software-engineering",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "developer-tools",
+      "target": "program-analysis-verification-and-synthesis",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "developer-tools",
+      "target": "human-computer-interaction",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "developer-tools",
+      "target": "machine-learning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "privacy-preserving-machine-learning",
+      "target": "privacy-enhancing-technologies",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "privacy-preserving-machine-learning",
+      "target": "machine-learning",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "privacy-preserving-machine-learning",
+      "target": "cryptography",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "privacy-preserving-machine-learning",
+      "target": "computational-learning-theory",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "computational-social-choice",
+      "target": "algorithmic-economics-and-game-theory",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "computational-social-choice",
+      "target": "computational-social-science",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "computational-social-choice",
+      "target": "computing-law-policy-and-governance",
+      "type": "synthesizes",
+      "strength": 0.8
+    },
+    {
+      "source": "discrete-mathematics-and-logic",
+      "target": "computational-complexity",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "discrete-mathematics-and-logic",
+      "target": "algorithms-and-data-structures",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "probability-and-statistics",
+      "target": "machine-learning",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "optimization",
+      "target": "machine-learning",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "information-theory-and-coding",
+      "target": "networking-and-communication",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "numerical-analysis",
+      "target": "numerical-and-scientific-computing",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "algorithms-and-data-structures",
+      "target": "databases-and-data-management",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "algorithms-and-data-structures",
+      "target": "information-retrieval-and-search",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "algorithms-and-data-structures",
+      "target": "computational-biology-and-bioinformatics",
+      "type": "applied_to",
+      "strength": 0.75
+    },
+    {
+      "source": "computational-complexity",
+      "target": "cryptography",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "computational-learning-theory",
+      "target": "machine-learning",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "algorithmic-economics-and-game-theory",
+      "target": "multiagent-systems",
+      "type": "overlaps_with",
+      "strength": 0.75
+    },
+    {
+      "source": "computer-architecture-and-organization",
+      "target": "operating-systems",
+      "type": "systems_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "operating-systems",
+      "target": "cloud-and-datacenter-systems",
+      "type": "systems_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "networking-and-communication",
+      "target": "parallel-and-distributed-systems",
+      "type": "systems_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "parallel-and-distributed-systems",
+      "target": "cloud-and-datacenter-systems",
+      "type": "systems_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "storage-systems",
+      "target": "databases-and-data-management",
+      "type": "systems_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "embedded-real-time-and-cyber-physical-systems",
+      "target": "robotics-and-autonomous-systems",
+      "type": "systems_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "programming-languages-and-semantics",
+      "target": "compilers-and-runtime-systems",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "programming-languages-and-semantics",
+      "target": "program-analysis-verification-and-synthesis",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "program-analysis-verification-and-synthesis",
+      "target": "software-testing-reliability-and-maintenance",
+      "type": "overlaps_with",
+      "strength": 0.75
+    },
+    {
+      "source": "databases-and-data-management",
+      "target": "data-systems-and-engineering",
+      "type": "overlaps_with",
+      "strength": 0.75
+    },
+    {
+      "source": "information-retrieval-and-search",
+      "target": "natural-language-and-speech",
+      "type": "overlaps_with",
+      "strength": 0.75
+    },
+    {
+      "source": "knowledge-graphs-and-semantic-data",
+      "target": "knowledge-representation-and-reasoning",
+      "type": "overlaps_with",
+      "strength": 0.75
+    },
+    {
+      "source": "machine-learning",
+      "target": "natural-language-and-speech",
+      "type": "applied_to",
+      "strength": 0.75
+    },
+    {
+      "source": "machine-learning",
+      "target": "computer-vision-and-perception",
+      "type": "applied_to",
+      "strength": 0.75
+    },
+    {
+      "source": "machine-learning",
+      "target": "robotics-and-autonomous-systems",
+      "type": "applied_to",
+      "strength": 0.75
+    },
+    {
+      "source": "search-planning-and-decision-making",
+      "target": "robotics-and-autonomous-systems",
+      "type": "applied_to",
+      "strength": 0.75
+    },
+    {
+      "source": "computer-vision-and-perception",
+      "target": "robotics-and-autonomous-systems",
+      "type": "applied_to",
+      "strength": 0.75
+    },
+    {
+      "source": "computer-graphics",
+      "target": "computer-vision-and-perception",
+      "type": "overlaps_with",
+      "strength": 0.75
+    },
+    {
+      "source": "visualization",
+      "target": "data-mining-and-knowledge-discovery",
+      "type": "applied_to",
+      "strength": 0.75
+    },
+    {
+      "source": "human-computer-interaction",
+      "target": "usable-security-and-privacy",
+      "type": "overlaps_with",
+      "strength": 0.75
+    },
+    {
+      "source": "cryptography",
+      "target": "privacy-enhancing-technologies",
+      "type": "theoretical_foundation_for",
+      "strength": 0.75
+    },
+    {
+      "source": "systems-and-software-security",
+      "target": "operating-systems",
+      "type": "uses_methods_from",
+      "strength": 0.75
+    },
+    {
+      "source": "hardware-security",
+      "target": "computer-architecture-and-organization",
+      "type": "uses_methods_from",
+      "strength": 0.75
+    },
+    {
+      "source": "computational-biology-and-bioinformatics",
+      "target": "machine-learning",
+      "type": "uses_methods_from",
+      "strength": 0.75
+    },
+    {
+      "source": "digital-humanities",
+      "target": "natural-language-and-speech",
+      "type": "uses_methods_from",
+      "strength": 0.75
+    },
+    {
+      "source": "digital-humanities",
+      "target": "visualization",
+      "type": "uses_methods_from",
+      "strength": 0.75
+    },
+    {
+      "source": "computational-sustainability",
+      "target": "optimization",
+      "type": "uses_methods_from",
+      "strength": 0.75
+    },
+    {
+      "source": "ethics-fairness-and-accountability",
+      "target": "machine-learning",
+      "type": "overlaps_with",
+      "strength": 0.75
+    },
+    {
+      "source": "sustainable-computing-and-environmental-impact",
+      "target": "cloud-and-datacenter-systems",
+      "type": "overlaps_with",
+      "strength": 0.75
+    }
+  ]
+}

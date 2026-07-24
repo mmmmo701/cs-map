@@ -1,0 +1,211 @@
+.panel {
+  height: 100%;
+  overflow-y: auto;
+  background: var(--surface-1);
+  border-left: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel[data-sheet] {
+  position: fixed;
+  inset: auto 0 0 0;
+  max-height: 80vh;
+  border-left: none;
+  border-top: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  background: var(--surface-1);
+}
+
+.heading {
+  font-size: 20px;
+  font-weight: 600;
+  outline: none;
+}
+
+.close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.close:hover {
+  background: var(--surface-2);
+}
+
+.body {
+  padding: 18px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.badge {
+  align-self: flex-start;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge[data-kind="bridge_field"] {
+  color: #d7b7ff;
+  border-color: #7a4fb8;
+}
+
+.badge[data-kind="constellation"] {
+  color: #e2b23b;
+  border-color: #8a6a1f;
+}
+
+.summaryText {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.sectionHeading {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.topicList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+}
+
+.inlineLink {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.inlineLink:hover {
+  text-decoration: underline;
+}
+
+.whyBox {
+  padding: 12px 14px;
+  background: rgb(226 178 59 / 0.08);
+  border: 1px solid rgb(226 178 59 / 0.28);
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+}
+
+.whyLabel {
+  font-weight: 600;
+  color: #e2b23b;
+  margin-bottom: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.confidenceNote {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  margin-top: 4px;
+}
+
+.coordinateDisclosure {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.coordinateDisclosure summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.relatedGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.relatedGroupHeading {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.relatedList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.relatedList button {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  cursor: pointer;
+  padding: 2px 0;
+  text-align: left;
+}
+
+.relatedList button:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.emptyNote {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.actions button {
+  padding: 7px 14px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  color: var(--text-primary);
+}

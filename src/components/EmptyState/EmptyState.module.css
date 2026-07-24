@@ -1,0 +1,44 @@
+.emptyState {
+  max-width: 480px;
+  margin: 10vh auto;
+  padding: 40px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.emptyState[data-tone="error"] {
+  color: var(--text-primary);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.description {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.action {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.action button,
+.action a {
+  padding: 8px 18px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+}

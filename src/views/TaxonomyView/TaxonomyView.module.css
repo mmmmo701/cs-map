@@ -1,0 +1,277 @@
+.taxonomy {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.intro {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.matchSummary {
+  margin-top: 6px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.domainSection details {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  overflow: hidden;
+}
+
+.domainSummary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.domainSummary::-webkit-details-marker {
+  display: none;
+}
+
+.domainDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--section-color);
+  flex-shrink: 0;
+}
+
+.domainName {
+  font-size: 17px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.domainNameButton {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.domainNameButton:hover {
+  text-decoration: underline;
+}
+
+.domainCount {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.domainBody {
+  padding: 0 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.domainDescription {
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fieldRow {
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldRowHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fieldName {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.fieldNameButton {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.fieldNameButton:hover {
+  text-decoration: underline;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge[data-kind="bridge_field"] {
+  color: #d7b7ff;
+  border-color: #7a4fb8;
+}
+
+.badge[data-kind="constellation"] {
+  color: #e2b23b;
+  border-color: #8a6a1f;
+}
+
+.summary {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.topics {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.topicsLabel {
+  color: var(--text-secondary);
+}
+
+.rowActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.rowActions button {
+  padding: 5px 12px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.rowActions button:hover {
+  color: var(--text-primary);
+}
+
+.crossRefRow {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 2px solid var(--border-subtle);
+}
+
+.crossRefButton {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 6px;
+}
+
+.crossRefButton:hover {
+  text-decoration: underline;
+}
+
+.crossRefNote {
+  font-style: italic;
+}
+
+.constellationSection {
+  border-top: 2px solid var(--border-subtle);
+  padding-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.constellationHeading {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.constellationIntro {
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  max-width: 640px;
+}
+
+.typeGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.typeHeading {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.constellationList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.constellationEntry {
+  padding: 16px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.whyBox {
+  padding: 10px 12px;
+  background: rgb(226 178 59 / 0.08);
+  border: 1px solid rgb(226 178 59 / 0.28);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+}
+
+.whyLabel {
+  font-weight: 600;
+  color: #e2b23b;
+  margin-bottom: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}

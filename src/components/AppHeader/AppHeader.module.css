@@ -1,0 +1,77 @@
+.header {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-1);
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tab {
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tabActive {
+  background: var(--surface-elevated);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.iconButton {
+  padding: 7px 12px;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.iconButton:hover {
+  color: var(--text-primary);
+  background: var(--surface-2);
+}
+
+@media (max-width: 900px) {
+  .title {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .iconButton:not(:last-child) {
+    display: none;
+  }
+}

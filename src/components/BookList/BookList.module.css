@@ -1,0 +1,35 @@
+.bookList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.book {
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.meta {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.level {
+  text-transform: capitalize;
+  color: var(--text-muted);
+}
+
+.note {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}

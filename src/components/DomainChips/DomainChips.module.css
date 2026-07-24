@@ -1,0 +1,46 @@
+.chipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.chipList[data-size="sm"] .chip {
+  font-size: 11px;
+  padding: 2px 8px 2px 6px;
+}
+
+.chip[data-primary] {
+  color: var(--text-primary);
+  border-color: var(--chip-color);
+  background: color-mix(in srgb, var(--chip-color) 16%, var(--surface-2));
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--chip-color);
+  flex-shrink: 0;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}

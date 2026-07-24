@@ -1,0 +1,165 @@
+.panel {
+  height: 100%;
+  overflow-y: auto;
+  background: var(--surface-1);
+  border-right: 1px solid var(--border-subtle);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel[data-sheet] {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: min(320px, 88vw);
+  border-right: 1px solid var(--border-subtle);
+  z-index: 50;
+}
+
+.railCollapsed {
+  height: 100%;
+  border-right: 1px solid var(--border-subtle);
+  background: var(--surface-1);
+}
+
+.sheetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sheetHeader button {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.sectionHeading {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.domainList,
+.checkboxList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.domainRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.domainDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.domainName {
+  flex: 1;
+}
+
+.domainCount {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.rangeFilter {
+  margin-bottom: 16px;
+}
+
+.rangeFilter:last-child {
+  margin-bottom: 0;
+}
+
+.rangeLabel {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+  margin-bottom: 6px;
+}
+
+.rangeInputsRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.rangeNumberLabel input {
+  width: 52px;
+  padding: 3px 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.rangeDash {
+  color: var(--text-muted);
+}
+
+.sliderRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sliderRow input[type="range"] {
+  width: 100%;
+}
+
+.rangeEndLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.resetRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.reset {
+  align-self: flex-start;
+  padding: 6px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.reset:hover {
+  color: var(--text-primary);
+}
